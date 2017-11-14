@@ -30,9 +30,13 @@ hs_err_pid*
 **/build
 
 # IntelliJ
-**/.iml
+*.iml
+**/.idea/dictionaries
 **/.idea/workspace.xml
 **/.idea/libraries
 
 # Local configuration file (sdk path, etc)
 **/local.properties
+
+# Swap files
+*.swp
