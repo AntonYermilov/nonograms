@@ -16,11 +16,20 @@ public class PlayMenuActivity extends AppCompatActivity {
         setContentView(R.layout.activity_play_menu);
 
 
-        Button b1 = (Button) findViewById(R.id.BlackWhiteButton);
-        b1.setOnClickListener(new View.OnClickListener() {
+        Button blackAndWhiteButton = (Button) findViewById(R.id.BlackWhiteButton);
+        blackAndWhiteButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
                 Intent intent = new Intent(PlayMenuActivity.this, CrosswordListActivity.class);
+                startActivity(intent);
+            }
+        });
+
+        Button createCrosswordButton = (Button) findViewById(R.id.createCrosswordButton);
+        createCrosswordButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                Intent intent = new Intent(PlayMenuActivity.this, CreateCrosswordActivity.class);
                 startActivity(intent);
             }
         });
