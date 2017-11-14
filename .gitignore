@@ -35,4 +35,4 @@ hs_err_pid*
 **/.idea/libraries
 
 # Local configuration file (sdk path, etc)
-local.properties
+**/local.properties
