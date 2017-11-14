@@ -37,7 +37,7 @@ class ImageTransformer {
                 image.setPixel(x, y, getARGB(a, grayTone, grayTone, grayTone));
             }
         }
-        return getARGB(1, backgroundColor, backgroundColor, backgroundColor);
+        return getARGB(-1, backgroundColor, backgroundColor, backgroundColor);
     }
 
     /**

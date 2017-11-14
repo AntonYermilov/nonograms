@@ -52,8 +52,6 @@ public class NonogramLogic {
      */
     private boolean canSolve(NonogramImage image) {
         MulticolorNonogramSolver solver = new MulticolorNonogramSolver(image);
-        solver.solve();
-        solver.print();
         return solver.solve();
     }
 

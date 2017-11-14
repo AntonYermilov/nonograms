@@ -35,7 +35,6 @@ public class NonogramImage {
         colors = 0;
 
         this.backgroundColor = backgroundColor;
-        System.err.println(backgroundColor);
 
         HashMap<Integer, Integer> colorId = new HashMap<>();
         colorId.put(backgroundColor, 0);
