@@ -1,8 +1,6 @@
 package ru.spbau.nonograms.logic;
 
-
 import android.graphics.Bitmap;
-
 import java.util.HashMap;
 
 /**
@@ -11,9 +9,11 @@ import java.util.HashMap;
 class NonogramCreator {
     /**
      * Receives compressed image and creates nonogram of the specified size.
+     *
      * @param image  specified image
      * @param width  width of nonogram
      * @param height height of nonogram
+     *
      * @return nonogram image
      */
     static NonogramImage createNonogram(Bitmap image, int width, int height, int backgroundColor) {
@@ -45,6 +45,17 @@ class NonogramCreator {
         return nonogram;
     }
 
+    /**
+     * Returns major color of specified area of image.
+     *
+     * @param image specified image
+     * @param x1    x coordinate of below left angle of rectangle area
+     * @param y1    y coordinate of below left angle of rectangle area
+     * @param x2    x coordinate of above right angle of rectangle area
+     * @param y2    y coordinate of above right angle of rectangle area
+     *
+     * @return major color
+     */
     private static int getMajorColor(Bitmap image, int x1, int y1, int x2, int y2) {
         HashMap<Integer, Integer> count = new HashMap<>();
         for (int x = x1; x < x2; x++) {
@@ -64,6 +75,16 @@ class NonogramCreator {
         return major;
     }
 
+    /**
+     * Sets all colors inside some area to the specified one.
+     *
+     * @param image specified image
+     * @param x1    x coordinate of below left angle of rectangle area
+     * @param y1    y coordinate of below left angle of rectangle area
+     * @param x2    x coordinate of above right angle of rectangle area
+     * @param y2    y coordinate of above right angle of rectangle area
+     * @param color specified color
+     */
     private static void setMajorColor(Bitmap image, int x1, int y1, int x2, int y2, int color) {
         for (int x = x1; x < x2; x++) {
             for (int y = y1; y < y2; y++) {
