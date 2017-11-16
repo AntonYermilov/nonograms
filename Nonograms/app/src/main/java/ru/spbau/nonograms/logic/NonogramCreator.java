@@ -19,10 +19,6 @@ class NonogramCreator {
      */
     static NonogramImage createNonogram(Bitmap image, int width, int height, int backgroundColor)
             throws NonogramImage.ColorOutOfRangeException {
-        System.err.println("Background color: " + backgroundColor);
-        System.err.println("Expected: " + width + "x" + height);
-        System.err.println("Found: " + image.getWidth() + "x" + image.getHeight());
-
         int[][] field = new int[image.getWidth()][image.getHeight()];
 
         for (int x = 0; x < image.getWidth(); x++) {

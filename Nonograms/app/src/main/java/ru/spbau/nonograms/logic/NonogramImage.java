@@ -54,10 +54,8 @@ public class NonogramImage {
         usedColors = new Color[colorId.size()];
         int nextColor = 0;
         for (int rgbColor : colorId.keySet()) {
-            System.err.print(rgbColor + " ");
             usedColors[nextColor++] = new Color(colorId.get(rgbColor), rgbColor);
         }
-        System.err.println();
 
         rows = new ArrayList[height];
         for (int i = 0; i < height; i++) {
