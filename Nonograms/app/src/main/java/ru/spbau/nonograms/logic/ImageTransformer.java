@@ -20,7 +20,7 @@ class ImageTransformer {
      *
      * @return the color of the background in RGB format
      */
-    static int selectMainColors(Bitmap image, int mainColors) {
+    static int selectMainColors(Bitmap image, int mainColors, int grayScaleType) {
         int backgroundColor = 0;
         for (int x = 0; x < image.getWidth(); x++) {
             for (int y = 0; y < image.getHeight(); y++) {
@@ -30,14 +30,14 @@ class ImageTransformer {
                 int g = Color.green(color);
                 int b = Color.blue(color);
 
-                int grayTone = grayScale(r, g, b, 0);
+                int grayTone = grayScale(r, g, b, grayScaleType);
                 grayTone = getOptimalColor(grayTone, mainColors);
 
                 backgroundColor = Math.max(backgroundColor, grayTone);
                 image.setPixel(x, y, getARGB(a, grayTone, grayTone, grayTone));
             }
         }
-        return getARGB(-1, backgroundColor, backgroundColor, backgroundColor);
+        return getARGB(255, backgroundColor, backgroundColor, backgroundColor);
     }
 
     /**
