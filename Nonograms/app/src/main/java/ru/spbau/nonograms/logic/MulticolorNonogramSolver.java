@@ -20,7 +20,7 @@ class MulticolorNonogramSolver {
      * if cell is exactly painted some color (this number determines the color
      * of cell), or 0 otherwise.
      */
-    private int field[][];
+    private int[][] field;
 
     private boolean isSolved = false;
     private boolean isCorrect = false;
@@ -89,15 +89,17 @@ class MulticolorNonogramSolver {
     /**
      * Tries to fill a row. Marks each cell depending on it's type:
      * "filled", "can be filled" or "can not be filled".
+     *
      * @param row      nonogram's row
      * @param sequence sequence of segments' sizes and colors
+     *
      * @return number of cells that were marked on this step
      */
     private int fillRow(int row, ArrayList<NonogramImage.Segment> sequence) {
         int filledNew = 0;
 
-        boolean isColored[][] = new boolean[image.getColors() + 1][image.getWidth()];
-        boolean isWhite[] = new boolean[image.getWidth()];
+        boolean[][] isColored = new boolean[image.getColors() + 1][image.getWidth()];
+        boolean[] isWhite = new boolean[image.getWidth()];
         for (int column = 0; column < image.getWidth(); column++) {
             isWhite[column] = field[row][column] == EXACTLY_WHITE;
             for (int color = 1; color <= image.getColors(); color++) {
@@ -106,7 +108,7 @@ class MulticolorNonogramSolver {
             }
         }
 
-        int updatedColors[] = getUpdatedColors(sequence, isColored, isWhite);
+        int[] updatedColors = getUpdatedColors(sequence, isColored, isWhite);
         for (int column = 0; column < image.getWidth(); column++) {
             filledNew += updatedColors[column] != field[row][column] ? 1 : 0;
             field[row][column] = updatedColors[column];
@@ -118,15 +120,17 @@ class MulticolorNonogramSolver {
     /**
      * Tries to fill a column. Marks each cell depending on it's type:
      * "filled", "can be filled" or "can not be filled".
+     *
      * @param column   nonogram's column
      * @param sequence sequence of segments' sizes and colors
+     *
      * @return number of cells that were marked on this step
      */
     private int fillColumn(int column, ArrayList<NonogramImage.Segment> sequence) {
         int filledNew = 0;
 
-        boolean isColored[][] = new boolean[image.getColors() + 1][image.getHeight()];
-        boolean isWhite[] = new boolean[image.getHeight()];
+        boolean[][] isColored = new boolean[image.getColors() + 1][image.getHeight()];
+        boolean[] isWhite = new boolean[image.getHeight()];
         for (int row = 0; row < image.getHeight(); row++) {
             isWhite[row] = field[row][column] == EXACTLY_WHITE;
             for (int color = 1; color <= image.getColors(); color++) {
@@ -135,7 +139,7 @@ class MulticolorNonogramSolver {
             }
         }
 
-        int updatedColors[] = getUpdatedColors(sequence, isColored, isWhite);
+        int[] updatedColors = getUpdatedColors(sequence, isColored, isWhite);
         for (int row = 0; row < image.getHeight(); row++) {
             filledNew += updatedColors[row] != field[row][column] ? 1 : 0;
             field[row][column] = updatedColors[row];
@@ -153,25 +157,26 @@ class MulticolorNonogramSolver {
      * @param isColored array that for each cell stores if it is exactly painted
      *                  some color or not
      * @param isWhite   array that for each cell stores if it is exactly white or not
+     *
      * @return array with updated colors of row/column
      */
     private int[] getUpdatedColors(ArrayList<NonogramImage.Segment> sequence,
                                    boolean[][] isColored, boolean[] isWhite) {
         int length = isWhite.length;
 
-        boolean canFitPrefix[][] = getPossiblePrefixes(sequence, isColored, isWhite);
+        boolean[][] canFitPrefix = getPossiblePrefixes(sequence, isColored, isWhite);
         Collections.reverse(sequence);
 
-        boolean canFitSuffix[][] = getPossiblePrefixes(sequence,
+        boolean[][] canFitSuffix = getPossiblePrefixes(sequence,
                 reverseArray(isColored), reverseArray(isWhite));
         Collections.reverse(sequence);
 
-        boolean canBeWhite[] = countIfCanBeWhite(sequence, isColored, isWhite,
+        boolean[] canBeWhite = countIfCanBeWhite(sequence, isColored, isWhite,
                 canFitPrefix, canFitSuffix);
-        int canBeColored[][] = countIfCanBeColored(sequence, isColored, isWhite,
+        int[][] canBeColored = countIfCanBeColored(sequence, isColored, isWhite,
                 canFitPrefix, canFitSuffix);
 
-        int updatedColors[] = new int[length];
+        int[] updatedColors = new int[length];
         for (int i = 0; i < length; i++) {
             if (canBeColored[0][i] > 0 && !canBeWhite[i]) {
                 updatedColors[i] = canBeColored[0][i];
@@ -194,6 +199,7 @@ class MulticolorNonogramSolver {
      *                     prefix can be covered with this number of blocks or not
      * @param canFitSuffix array that for each suffix and each number of blocks stores if this
      *                     prefix can be covered with this number of blocks or not
+     *
      * @return array that for each cell stores if it can stay white or not.
      */
     private boolean[] countIfCanBeWhite(ArrayList<NonogramImage.Segment> sequence,
@@ -202,7 +208,7 @@ class MulticolorNonogramSolver {
         int length = isWhite.length;
         int blocks = sequence.size();
 
-        boolean canBeWhite[] = new boolean[length];
+        boolean[] canBeWhite = new boolean[length];
         for (int i = 0; i < length; i++) {
             for (int k = 0; k <= blocks; k++) {
                 if (!isColored[0][i] && canFitPrefix[k][i] && canFitSuffix[blocks - k][length - i - 1]) {
@@ -227,6 +233,7 @@ class MulticolorNonogramSolver {
      *                     prefix can be covered with this number of blocks or not
      * @param canFitSuffix array that for each suffix and each number of blocks stores if this
      *                     prefix can be covered with this number of blocks or not
+     *
      * @return array that for each cell stores if it can be painted some color or not
      */
     private int[][] countIfCanBeColored(ArrayList<NonogramImage.Segment> sequence,
@@ -236,13 +243,13 @@ class MulticolorNonogramSolver {
         int blocks = sequence.size();
         int colors = isColored.length;
 
-        int countWhite[] = getPrefixSums(isWhite);
-        int countColored[][] = new int[colors][];
+        int[] countWhite = getPrefixSums(isWhite);
+        int[][] countColored = new int[colors][];
         for (int color = 0; color < colors; color++) {
             countColored[color] = getPrefixSums(isColored[color]);
         }
 
-        int intervals[][] = new int[colors][length + 1];
+        int[][] intervals = new int[colors][length + 1];
         for (int k = 0; k < blocks; k++) {
             int size = sequence.get(k).getSize();
             int color = sequence.get(k).getColorType();
@@ -273,7 +280,7 @@ class MulticolorNonogramSolver {
 
         }
 
-        int canBeColored[][] = new int[colors][length];
+        int[][] canBeColored = new int[colors][length];
         for (int color = 1; color < colors; color++) {
             for (int i = 0, inside = 0; i < length; i++) {
                 inside += intervals[color][i];
@@ -290,10 +297,12 @@ class MulticolorNonogramSolver {
     /**
      * For each size of prefix and each number of blocks counts if it is possible to cover
      * this prefix with this number of blocks correctly.
+     *
      * @param sequence  sequence of segments' sizes and colors
      * @param isColored array that for each cell stores if it is exactly painted
      *                  some color or not
      * @param isWhite   array that for each cell stores if it is exactly white or not
+     *
      * @return array that for each state (pair of prefix size and number of blocks)
      * stores if it is correct or not
      */
@@ -302,13 +311,13 @@ class MulticolorNonogramSolver {
         int length = isWhite.length;
         int blocks = sequence.size();
 
-        int countWhite[] = getPrefixSums(isWhite);
-        int countColored[][] = new int[isColored.length][];
+        int[] countWhite = getPrefixSums(isWhite);
+        int[][] countColored = new int[isColored.length][];
         for (int color = 0; color < isColored.length; color++) {
             countColored[color] = getPrefixSums(isColored[color]);
         }
 
-        boolean possible[][] = new boolean[blocks + 1][length + 1];
+        boolean[][] possible = new boolean[blocks + 1][length + 1];
         for (int i = 0; i <= length; i++) {
             possible[0][i] = i == 0 || possible[0][i - 1] && !isColored[0][i - 1];
         }
@@ -354,7 +363,7 @@ class MulticolorNonogramSolver {
      */
     private int[] getPrefixSums(boolean[] array) {
         int length = array.length;
-        int sums[] = new int[length + 1];
+        int[] sums = new int[length + 1];
         for (int i = 1; i <= length; i++) {
             sums[i] = sums[i - 1] + (array[i - 1] ? 1 : 0);
         }
@@ -368,7 +377,7 @@ class MulticolorNonogramSolver {
      */
     private boolean[] reverseArray(boolean[] array) {
         int columns = array.length;
-        boolean copy[] = new boolean[columns];
+        boolean[] copy = new boolean[columns];
         for (int i = 0; i < columns; i++) {
             copy[i] = array[columns - i - 1];
             copy[columns - i - 1] = array[i];
@@ -383,7 +392,7 @@ class MulticolorNonogramSolver {
      */
     private boolean[][] reverseArray(boolean[][] array) {
         int rows = array.length;
-        boolean copy[][] = new boolean[rows][];
+        boolean[][] copy = new boolean[rows][];
         for (int i = 0; i < rows; i++) {
             copy[i] = reverseArray(array[i]);
         }
