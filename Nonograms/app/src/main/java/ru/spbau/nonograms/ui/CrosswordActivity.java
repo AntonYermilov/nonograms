@@ -9,6 +9,7 @@ import android.view.SurfaceView;
 import android.view.View;
 
 import ru.spbau.nonograms.R;
+import ru.spbau.nonograms.local_database.CurrentCrosswordState;
 import ru.spbau.nonograms.ui.draw.CrosswordCanvas;
 import ru.spbau.nonograms.ui.draw.CrosswordDrawer;
 
@@ -16,7 +17,19 @@ public class CrosswordActivity extends AppCompatActivity implements SurfaceHolde
 
     private SurfaceHolder surfaceHolder;
 
-    int[][] current = new int[5][5];
+    CurrentCrosswordState current = new CurrentCrosswordState(new int[][] {
+            {1, 1},
+            {1, 1, 1},
+            {1, 1},
+            {1, 1},
+            {1}
+    }, new int[][] {
+            {2},
+            {1, 1},
+            {1, 1},
+            {1, 1},
+            {2}
+    }, null);
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -34,18 +47,18 @@ public class CrosswordActivity extends AppCompatActivity implements SurfaceHolde
     public void surfaceCreated(SurfaceHolder surfaceHolder) {
         Canvas canvas = surfaceHolder.lockCanvas();
         CrosswordCanvas myCanvas = new CrosswordCanvas(canvas);
-        CrosswordDrawer.drawBackground(myCanvas);
+        CrosswordDrawer.drawBackground(myCanvas, current);
         surfaceHolder.unlockCanvasAndPost(canvas);
     }
 
     @Override
     public void surfaceChanged(SurfaceHolder surfaceHolder, int i, int i1, int i2) {
-
+        redraw();
     }
 
     @Override
     public void surfaceDestroyed(SurfaceHolder surfaceHolder) {
-
+        //redraw();
     }
 
     @Override
@@ -54,11 +67,10 @@ public class CrosswordActivity extends AppCompatActivity implements SurfaceHolde
         double mY = motionEvent.getY();
         switch (motionEvent.getAction()) {
             case MotionEvent.ACTION_DOWN: {
-                int x = (int)Math.floor((mX - CrosswordDrawer.OFFSET_X) / CrosswordDrawer.CELL_SIZE);
-                int y = (int)Math.floor((mY - CrosswordDrawer.OFFSET_Y) / CrosswordDrawer.CELL_SIZE);
-                if (x < 5 && x >= 0 && y < 5 && y >= 0) {
-                    current[x][y] += 1;
-                    current[x][y] %= 3;
+                int x = (int)Math.floor((mX - CrosswordDrawer.getSumOffsetX()) / CrosswordDrawer.CELL_SIZE);
+                int y = (int)Math.floor((mY - CrosswordDrawer.getSumOffsetY()) / CrosswordDrawer.CELL_SIZE);
+                if (x < current.getWidth() && x >= 0 && y < current.getHeight() && y >= 0) {
+                    current.setField(x, y, (current.getField(x, y) + 1) % 3);
                 }
                 redraw();
             }

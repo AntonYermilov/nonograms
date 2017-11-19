@@ -10,21 +10,24 @@ public class CrosswordCanvas {
         this.canvas = canvas;
     }
 
-    public void drawLine(float startX, float startY, float stopX, float stopY, Paint paint) {
-        canvas.drawLine(startX + CrosswordDrawer.OFFSET_X, startY + CrosswordDrawer.OFFSET_Y,
-                stopX + CrosswordDrawer.OFFSET_X, stopY + CrosswordDrawer.OFFSET_Y, paint);
+    public void drawLine(int offsetX, int offsetY,
+                         float x1, float y1, float x2, float y2, Paint paint) {
+        canvas.drawLine(x1 + offsetX, y1 + offsetY, x2 + offsetX, y2 + offsetY, paint);
     }
 
-    public void drawCross(float x1, float y1, float x2, float y2, Paint paint) {
-        canvas.drawLine(x1 + CrosswordDrawer.OFFSET_X, y1 + CrosswordDrawer.OFFSET_Y,
-                x2 + CrosswordDrawer.OFFSET_X, y2 + CrosswordDrawer.OFFSET_Y, paint);
-        canvas.drawLine(x1 + CrosswordDrawer.OFFSET_X, y2 + CrosswordDrawer.OFFSET_Y,
-                x2 + CrosswordDrawer.OFFSET_X, y1 + CrosswordDrawer.OFFSET_Y, paint);
+    public void drawCross(int offsetX, int offsetY,
+                          float x1, float y1, float x2, float y2, Paint paint) {
+        canvas.drawLine(x1 + offsetX, y1 + offsetY, x2 + offsetX, y2 + offsetY, paint);
+        canvas.drawLine(x1 + offsetX, y2 + offsetY, x2 + offsetX, y1 + offsetY, paint);
     }
 
-    public void drawSquare(float x1, float y1, float x2, float y2, Paint paint) {
-        canvas.drawRect(x1 + CrosswordDrawer.OFFSET_X, y1 + CrosswordDrawer.OFFSET_Y,
-                x2 + CrosswordDrawer.OFFSET_X, y2 + CrosswordDrawer.OFFSET_Y, paint);
+    public void drawSquare(int offsetX, int offsetY,
+                           float x1, float y1, float x2, float y2, Paint paint) {
+        canvas.drawRect(x1 + offsetX, y1 + offsetY, x2 + offsetX, y2 + offsetY, paint);
+    }
+
+    public void drawNumber(int offsetX, int offsetY, int number, float x, float y, Paint paint) {
+        canvas.drawText(Integer.toString(number), x + offsetX, y + offsetY, paint);
     }
 
     public void drawColor(int color) {
