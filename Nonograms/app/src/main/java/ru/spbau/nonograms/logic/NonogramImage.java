@@ -1,20 +1,22 @@
 package ru.spbau.nonograms.logic;
 
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 
 /**
  * Class for storing information about nonogram.
  * Stores nonogram's size and list of numbers for each row and column.
  */
-public class NonogramImage {
+public class NonogramImage implements Serializable {
     public static final int MAX_COLORS = 7;
 
     private int height;
     private int width;
     private int colors;
-    private ArrayList<Segment>[] rows;
-    private ArrayList<Segment>[] columns;
+    private List<Segment>[] rows;
+    private List<Segment>[] columns;
 
     private int backgroundColor;
     private Color[] usedColors;
@@ -57,7 +59,7 @@ public class NonogramImage {
             usedColors[nextColor++] = new Color(colorId.get(rgbColor), rgbColor);
         }
 
-        rows = new ArrayList[height];
+        rows = new List[height];
         for (int i = 0; i < height; i++) {
             rows[i] = new ArrayList<>();
             for (int l = 0, r = 0; r < width; l = r) {
@@ -70,7 +72,7 @@ public class NonogramImage {
             }
         }
 
-        columns = new ArrayList[width];
+        columns = new List[width];
         for (int i = 0; i < width; i++) {
             columns[i] = new ArrayList<>();
             for (int l = 0, r = 0; r < height; l = r) {
@@ -113,7 +115,7 @@ public class NonogramImage {
      * @param row specified row
      * @return sequence of blocks that correspond to the specified row
      */
-    public ArrayList<Segment> getRow(int row) {
+    public List<Segment> getRow(int row) {
         return new ArrayList<>(rows[row]);
     }
 
@@ -122,7 +124,7 @@ public class NonogramImage {
      * @param column specified column
      * @return sequence of blocks that correspond to the specified column
      */
-    public ArrayList<Segment> getColumn(int column) {
+    public List<Segment> getColumn(int column) {
         return new ArrayList<>(columns[column]);
     }
 
