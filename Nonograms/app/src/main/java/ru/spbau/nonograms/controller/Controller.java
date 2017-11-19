@@ -4,6 +4,7 @@ import android.graphics.Bitmap;
 import android.graphics.drawable.BitmapDrawable;
 import android.widget.ImageView;
 
+import ru.spbau.nonograms.logic.NonogramImage;
 import ru.spbau.nonograms.logic.NonogramLogic;
 
 public class Controller {
@@ -15,8 +16,11 @@ public class Controller {
     //pair -- result + crossword
     //receives an image, user posted
     public static Bitmap makeCrosswordViewFromImage(ImageView givenImage) {
-        NonogramLogic result = new NonogramLogic(getBitmap(givenImage));
-        return result.showNonogram(20, 20, 5);
+        return NonogramLogic.createNonogram(getBitmap(givenImage), 70, 70, 5);
+    }
+
+    public static NonogramImage getMadeCrosswordFromLastImage() {
+        return NonogramLogic.getLastNonogram();
     }
 
     private static Bitmap getBitmap(ImageView givenImage) {

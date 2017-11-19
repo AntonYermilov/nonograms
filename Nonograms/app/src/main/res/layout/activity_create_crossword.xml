@@ -6,81 +6,90 @@
     android:layout_height="match_parent"
     tools:context="ru.spbau.nonograms.ui.CreateCrosswordActivity">
 
-    <ImageView
-        android:id="@+id/givenImage"
-        android:layout_width="170dp"
-        android:layout_height="330dp"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintHorizontal_bias="0.08"
-        app:layout_constraintLeft_toLeftOf="parent"
-        app:layout_constraintRight_toRightOf="parent"
-        app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintVertical_bias="0.335"
-        app:srcCompat="@android:drawable/ic_menu_gallery" />
+    <android.support.constraint.Guideline
+        android:id="@+id/guideline"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        app:layout_constraintGuide_percent="0.05"/>
 
-    <ImageView
-        android:id="@+id/resultImage"
-        android:layout_width="170dp"
-        android:layout_height="330dp"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintHorizontal_bias="0.92"
-        app:layout_constraintLeft_toLeftOf="parent"
-        app:layout_constraintRight_toRightOf="parent"
-        app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintVertical_bias="0.335"
-        app:srcCompat="@android:drawable/ic_menu_help" />
+    <android.support.constraint.Guideline
+        android:id="@+id/guideline1"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        app:layout_constraintGuide_percent="0.95"/>
 
-    <Button
-        android:id="@+id/uploadPictureButton"
-        android:layout_width="170dp"
-        android:layout_height="50dp"
-        android:fontFamily="casual"
-        android:text="upload picture"
-        app:layout_constraintRight_toRightOf="parent"
-        app:layout_constraintLeft_toLeftOf="parent"
+    <GridLayout
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:columnCount="2"
+        android:rowCount="3"
+        app:layout_constraintLeft_toLeftOf="@+id/guideline"
+        app:layout_constraintRight_toRightOf="@+id/guideline1"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintVertical_bias="0.92"
-        app:layout_constraintHorizontal_bias="0.08" />
+        tools:layout_editor_absoluteY="12dp"
+        tools:layout_editor_absoluteX="29dp">
 
-    <TextView
-        android:id="@+id/textView2"
-        android:layout_width="170dp"
-        android:layout_height="40dp"
-        android:fontFamily="casual"
-        android:text="Your image:"
-        android:textSize="18sp"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintRight_toRightOf="parent"
-        app:layout_constraintLeft_toLeftOf="parent"
-        app:layout_constraintHorizontal_bias="0.074"
-        app:layout_constraintVertical_bias="0.033" />
+        <TextView
+            android:id="@+id/textView3"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_column="1"
+            android:layout_row="0"
+            android:fontFamily="casual"
+            android:text="@string/result_image_text"
+            android:textSize="18sp" />
 
-    <TextView
-        android:id="@+id/textView3"
-        android:layout_width="170dp"
-        android:layout_height="40dp"
-        android:fontFamily="casual"
-        android:text="Result image:"
-        android:textSize="18sp"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintHorizontal_bias="0.925"
-        app:layout_constraintLeft_toLeftOf="parent"
-        app:layout_constraintRight_toRightOf="parent"
-        app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintVertical_bias="0.033" />
+        <TextView
+            android:id="@+id/textView2"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_column="0"
+            android:layout_row="0"
+            android:fontFamily="casual"
+            android:text="@string/your_image_text"
+            android:textAlignment="center"
+            android:textSize="18sp" />
 
-    <Button
-        android:id="@+id/makeCrosswordButton"
-        android:layout_width="170dp"
-        android:layout_height="50dp"
-        android:fontFamily="casual"
-        android:text="Make puzzle"
-        app:layout_constraintRight_toRightOf="parent"
-        app:layout_constraintLeft_toLeftOf="parent"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintHorizontal_bias="0.92"
-        app:layout_constraintVertical_bias="0.92" />
+        <Button
+            android:id="@+id/makeCrosswordButton"
+            android:layout_width="170dp"
+            android:layout_height="50dp"
+            android:layout_column="1"
+            android:layout_row="2"
+            android:fontFamily="casual"
+            android:text="@string/make_puzzle_text" />
+
+        <Button
+            android:id="@+id/uploadPictureButton"
+            android:layout_width="170dp"
+            android:layout_height="50dp"
+            android:layout_column="0"
+            android:layout_row="2"
+            android:fontFamily="casual"
+            android:text="@string/upload_picture_text" />
+
+        <ImageView
+            android:id="@+id/resultImage"
+            android:layout_width="170dp"
+            android:layout_height="330dp"
+            android:layout_column="1"
+            android:layout_row="1"
+            android:layout_gravity="fill"
+            app:srcCompat="@android:drawable/ic_menu_help"
+            android:contentDescription="@string/result_image_text" />
+
+        <ImageView
+            android:id="@+id/givenImage"
+            android:layout_width="170dp"
+            android:layout_height="330dp"
+            android:layout_gravity="fill"
+            android:layout_column="0"
+            android:layout_row="1"
+            app:srcCompat="@android:drawable/ic_menu_gallery"
+            android:contentDescription="@string/your_image_text" />
+
+    </GridLayout>
 </android.support.constraint.ConstraintLayout>

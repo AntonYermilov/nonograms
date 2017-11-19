@@ -227,7 +227,7 @@ public class NonogramImage {
     /**
      * Throws if more than {@code MAX_COLORS} colors used in nonogram.
      */
-    public static class ColorOutOfRangeException extends Exception {
+    public static class ColorOutOfRangeException extends IllegalArgumentException {
         ColorOutOfRangeException() {
             super("Incorrect field. Not more than " + MAX_COLORS + "colors, not counting" +
                     "the background color, can be used in nonogram.");

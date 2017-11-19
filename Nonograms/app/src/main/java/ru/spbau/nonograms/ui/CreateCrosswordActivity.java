@@ -11,9 +11,11 @@ import android.os.Bundle;
 import android.view.View;
 import android.widget.Button;
 import android.widget.ImageView;
+import android.widget.Toast;
 
 import ru.spbau.nonograms.R;
 import ru.spbau.nonograms.controller.Controller;
+import ru.spbau.nonograms.logic.NonogramImage;
 
 public class CreateCrosswordActivity extends AppCompatActivity {
 
@@ -42,8 +44,20 @@ public class CreateCrosswordActivity extends AppCompatActivity {
         makePuzzleButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                Bitmap result = Controller.makeCrosswordViewFromImage(givenImage);
-                resultImage.setImageBitmap(result);
+                try {
+                    Bitmap result = Controller.makeCrosswordViewFromImage(givenImage);
+                    if (Controller.getMadeCrosswordFromLastImage() == null) {
+                        Toast nonSuccess = Toast.makeText(CreateCrosswordActivity.this,
+                                "Sorry, we couldn't build puzzle.", Toast.LENGTH_LONG);
+                        nonSuccess.show();
+                    }
+                    resultImage.setImageBitmap(result);
+                } catch (OutOfMemoryError e) {
+                    Toast nonSuccess = Toast.makeText(CreateCrosswordActivity.this,
+                            "Sorry, the picture was too big.", Toast.LENGTH_LONG);
+                    nonSuccess.show();
+                    System.gc();
+                }
             }
         });
     }
