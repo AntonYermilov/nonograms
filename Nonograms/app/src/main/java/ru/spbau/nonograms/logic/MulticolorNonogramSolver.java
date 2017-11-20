@@ -1,8 +1,8 @@
 package ru.spbau.nonograms.logic;
 
-
-import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collections;
+import java.util.List;
 
 /**
  * Solver for Japanese crosswords.
@@ -25,6 +25,9 @@ class MulticolorNonogramSolver {
     private boolean isSolved = false;
     private boolean isCorrect = false;
 
+    private boolean[] isUpdatedRow;
+    private boolean[] isUpdatedColumn;
+
     /**
      * Constructs nonogram solver from nonogram image.
      * @param image specified nonogram image
@@ -32,6 +35,11 @@ class MulticolorNonogramSolver {
     MulticolorNonogramSolver(NonogramImage image) {
         this.image = image;
         this.field = new int[image.getHeight()][image.getWidth()];
+
+        this.isUpdatedRow = new boolean[image.getHeight()];
+        this.isUpdatedColumn = new boolean[image.getWidth()];
+        Arrays.fill(this.isUpdatedRow, true);
+        Arrays.fill(this.isUpdatedColumn, true);
     }
 
     /**
@@ -70,17 +78,32 @@ class MulticolorNonogramSolver {
         int filled = 0;
         while (!isSolved) {
             isSolved = true;
+
+            System.err.println("Filling rows...");
             for (int row = 0; row < image.getHeight(); row++) {
+                if (!isUpdatedRow[row]) {
+                    continue;
+                }
                 int added = fillRow(row, image.getRow(row));
                 filled += added;
                 isSolved &= added == 0;
             }
+            Arrays.fill(isUpdatedRow, false);
+
+            System.err.println("Filling columns...");
             for (int column = 0; column < image.getWidth(); column++) {
+                if (!isUpdatedColumn[column]) {
+                    continue;
+                }
                 int added = fillColumn(column, image.getColumn(column));
                 filled += added;
                 isSolved &= added == 0;
             }
+            Arrays.fill(isUpdatedColumn, false);
         }
+
+        System.err.println("Filled " + filled + " cells out of " +
+                image.getHeight() * image.getWidth());
 
         isCorrect = filled == image.getHeight() * image.getWidth();
         return isCorrect;
@@ -95,7 +118,7 @@ class MulticolorNonogramSolver {
      *
      * @return number of cells that were marked on this step
      */
-    private int fillRow(int row, ArrayList<NonogramImage.Segment> sequence) {
+    private int fillRow(int row, List<NonogramImage.Segment> sequence) {
         int filledNew = 0;
 
         boolean[][] isColored = new boolean[image.getColors() + 1][image.getWidth()];
@@ -110,7 +133,10 @@ class MulticolorNonogramSolver {
 
         int[] updatedColors = getUpdatedColors(sequence, isColored, isWhite);
         for (int column = 0; column < image.getWidth(); column++) {
-            filledNew += updatedColors[column] != field[row][column] ? 1 : 0;
+            if (updatedColors[column] != field[row][column]) {
+                filledNew++;
+                isUpdatedColumn[column] = true;
+            }
             field[row][column] = updatedColors[column];
         }
 
@@ -126,7 +152,7 @@ class MulticolorNonogramSolver {
      *
      * @return number of cells that were marked on this step
      */
-    private int fillColumn(int column, ArrayList<NonogramImage.Segment> sequence) {
+    private int fillColumn(int column, List<NonogramImage.Segment> sequence) {
         int filledNew = 0;
 
         boolean[][] isColored = new boolean[image.getColors() + 1][image.getHeight()];
@@ -141,7 +167,10 @@ class MulticolorNonogramSolver {
 
         int[] updatedColors = getUpdatedColors(sequence, isColored, isWhite);
         for (int row = 0; row < image.getHeight(); row++) {
-            filledNew += updatedColors[row] != field[row][column] ? 1 : 0;
+            if (updatedColors[row] != field[row][column]) {
+                filledNew++;
+                isUpdatedRow[row] = true;
+            }
             field[row][column] = updatedColors[row];
         }
 
@@ -160,7 +189,7 @@ class MulticolorNonogramSolver {
      *
      * @return array with updated colors of row/column
      */
-    private int[] getUpdatedColors(ArrayList<NonogramImage.Segment> sequence,
+    private int[] getUpdatedColors(List<NonogramImage.Segment> sequence,
                                    boolean[][] isColored, boolean[] isWhite) {
         int length = isWhite.length;
 
@@ -202,7 +231,7 @@ class MulticolorNonogramSolver {
      *
      * @return array that for each cell stores if it can stay white or not.
      */
-    private boolean[] countIfCanBeWhite(ArrayList<NonogramImage.Segment> sequence,
+    private boolean[] countIfCanBeWhite(List<NonogramImage.Segment> sequence,
                                         boolean[][] isColored, boolean[] isWhite,
                                         boolean[][] canFitPrefix, boolean[][] canFitSuffix) {
         int length = isWhite.length;
@@ -236,7 +265,7 @@ class MulticolorNonogramSolver {
      *
      * @return array that for each cell stores if it can be painted some color or not
      */
-    private int[][] countIfCanBeColored(ArrayList<NonogramImage.Segment> sequence,
+    private int[][] countIfCanBeColored(List<NonogramImage.Segment> sequence,
                                         boolean[][] isColored, boolean[] isWhite,
                                         boolean[][] canFitPrefix, boolean[][] canFitSuffix) {
         int length = isWhite.length;
@@ -306,7 +335,7 @@ class MulticolorNonogramSolver {
      * @return array that for each state (pair of prefix size and number of blocks)
      * stores if it is correct or not
      */
-    private boolean[][] getPossiblePrefixes(ArrayList<NonogramImage.Segment> sequence,
+    private boolean[][] getPossiblePrefixes(List<NonogramImage.Segment> sequence,
                                             boolean[][] isColored, boolean[] isWhite) {
         int length = isWhite.length;
         int blocks = sequence.size();

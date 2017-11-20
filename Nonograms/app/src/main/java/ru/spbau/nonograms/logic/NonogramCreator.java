@@ -10,15 +10,11 @@ class NonogramCreator {
 
     /**
      * Receives compressed image and creates nonogram of the specified size.
-     *
      * @param image  specified image
-     * @param width  width of nonogram
-     * @param height height of nonogram
-     *
+     * @param backgroundColor color of the background
      * @return nonogram image
      */
-    static NonogramImage createNonogram(Bitmap image, int width, int height, int backgroundColor)
-            throws NonogramImage.ColorOutOfRangeException {
+    static NonogramImage createNonogram(Bitmap image, int backgroundColor) {
         int[][] field = new int[image.getWidth()][image.getHeight()];
 
         for (int x = 0; x < image.getWidth(); x++) {
