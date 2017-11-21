@@ -1,5 +1,7 @@
 package ru.spbau.nonograms.logic;
 
+import android.preference.PreferenceActivity;
+
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -21,6 +23,47 @@ public class NonogramImage implements Serializable {
     private int backgroundColor;
     private Color[] usedColors;
 
+    public NonogramImage(int height, int width, int backgroundColor,
+                         ArrayList<Segment>[] rows, ArrayList<Segment>[] columns) {
+        this.height = height;
+        this.width = width;
+        this.backgroundColor = backgroundColor;
+
+        HashMap<Integer, Integer> colorId = new HashMap<>();
+        colorId.put(backgroundColor, 0);
+
+        this.rows = new List[height];
+        for (int i = 0; i < height; i++) {
+            this.rows[i] = new ArrayList<>(rows[i]);
+            for (Segment seg : rows[i]) {
+                if (!colorId.containsKey(seg.getRGBColor())) {
+                    colorId.put(seg.getRGBColor(), seg.getColorType());
+                    colors = Math.max(colors, seg.getColorType());
+                }
+            }
+        }
+        this.columns = new List[width];
+        for (int i = 0; i < width; i++) {
+            this.columns[i] = new ArrayList<>(columns[i]);
+            for (Segment seg : columns[i]) {
+                if (!colorId.containsKey(seg.getRGBColor())) {
+                    colorId.put(seg.getRGBColor(), seg.getColorType());
+                    colors = Math.max(colors, seg.getColorType());
+                }
+            }
+        }
+
+        if (colors > MAX_COLORS || colors + 1 != colorId.size()) {
+            throw new ColorOutOfRangeException();
+        }
+
+        usedColors = new Color[colorId.size()];
+        int nextColor = 0;
+        for (int rgbColor : colorId.keySet()) {
+            usedColors[nextColor++] = new Color(colorId.get(rgbColor), rgbColor);
+        }
+    }
+
     /**
      * Receives the resulting look of nonogram as two-dimensional array
      * of RGB colors and color of background. Uses them to create nonogram.
@@ -31,7 +74,7 @@ public class NonogramImage implements Serializable {
      * @throws ColorOutOfRangeException if there are more than {@code MAX_COLORS}
      * colors, not counting the background color
      */
-    NonogramImage(int[][] field, int backgroundColor) throws ColorOutOfRangeException {
+    public NonogramImage(int[][] field, int backgroundColor) {
         height = field.length;
         width = field[0].length;
         colors = 0;
@@ -162,7 +205,7 @@ public class NonogramImage implements Serializable {
          * @param colorType the type of color
          * @param rgbColor  the color in RGB format
          */
-        Segment(int size, int colorType, int rgbColor) {
+        public Segment(int size, int colorType, int rgbColor) {
             this.size = size;
             this.color = new Color(colorType, rgbColor);
         }
@@ -204,7 +247,7 @@ public class NonogramImage implements Serializable {
          * @param colorType the type of the color
          * @param rgbColor  RGB value of the color
          */
-        Color(int colorType, int rgbColor) {
+        public Color(int colorType, int rgbColor) {
             this.colorType = colorType;
             this.rgbColor = rgbColor;
         }
@@ -231,8 +274,9 @@ public class NonogramImage implements Serializable {
      */
     public static class ColorOutOfRangeException extends IllegalArgumentException {
         ColorOutOfRangeException() {
-            super("Incorrect field. Not more than " + MAX_COLORS + "colors, not counting" +
-                    "the background color, can be used in nonogram.");
+            super("Error when creating image. Not more than " + MAX_COLORS + "colors, not counting" +
+                    "the background color, can be used in nonogram. All color types, if used," +
+                    "should be sequent, background color should have type equals to 0");
         }
     }
 }
