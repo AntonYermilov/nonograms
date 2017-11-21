@@ -1,14 +1,20 @@
 package ru.spbau.nonograms.ui;
 
 import android.graphics.Canvas;
+import android.graphics.Typeface;
+import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.view.Gravity;
 import android.view.MotionEvent;
 import android.view.SurfaceHolder;
 import android.view.SurfaceView;
 import android.view.View;
+import android.widget.Button;
+import android.widget.TextView;
 
 import ru.spbau.nonograms.R;
+import ru.spbau.nonograms.controller.Controller;
 import ru.spbau.nonograms.local_database.CurrentCrosswordState;
 import ru.spbau.nonograms.ui.draw.CrosswordCanvas;
 import ru.spbau.nonograms.ui.draw.CrosswordDrawer;
@@ -41,6 +47,25 @@ public class CrosswordActivity extends AppCompatActivity implements SurfaceHolde
         surfaceHolder = surface.getHolder();
         surfaceHolder.addCallback(this);
         surface.setOnTouchListener(this);
+
+        Button checkButton = (Button) findViewById(R.id.checkButton);
+        checkButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                boolean checkResult = Controller.checkCorrectness(current);
+                TextView messageResult = new TextView(CrosswordActivity.this);
+                messageResult.setGravity(Gravity.CENTER);
+                messageResult.setTextSize(20);
+                if (checkResult) {
+                    messageResult.setText("WOW! You solved it right!");
+                } else {
+                    messageResult.setText("There are some mistakes, try to solve it again. =(");
+                }
+                AlertDialog info = new AlertDialog.Builder(CrosswordActivity.this).create();
+                info.setView(messageResult);
+                info.show();
+            }
+        });
     }
 
     @Override

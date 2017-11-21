@@ -5,6 +5,9 @@ package ru.spbau.nonograms.local_database;
  * Current field and useful info to display crossword.
  */
 public class CurrentCrosswordState {
+
+    public static final int FILLED_CELL = 2;
+
     private int height;
     private int width;
 
