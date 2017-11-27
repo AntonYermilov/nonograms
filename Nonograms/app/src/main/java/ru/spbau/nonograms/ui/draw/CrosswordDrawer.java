@@ -26,23 +26,25 @@ public class CrosswordDrawer {
         LINE_PAINT.setTextSize(70);
         LINE_PAINT.setTextAlign(Paint.Align.CENTER);
 
-        int[][] columns = table.getColumns();
+        CurrentCrosswordState.ColoredValue[][] columns = table.getColumns();
 
         for (int i = 0; i < columns.length; i++) {
             for (int j = 0; j < columns[i].length; j++) {
-                float[] xy = countCentreOfTheNumber(columns[i][j] + "", 0, 0, CELL_SIZE, CELL_SIZE, LINE_PAINT);
-                canvas.drawNumber(offsetX + leftHeaderSize, offsetY, columns[i][j],
+                float[] xy = countCentreOfTheNumber(columns[i][j].getValue() + "", 0, 0, CELL_SIZE, CELL_SIZE, LINE_PAINT);
+                LINE_PAINT.setColor(columns[i][j].getColor());
+                canvas.drawNumber(offsetX + leftHeaderSize, offsetY, columns[i][j].getValue(),
                         i * CELL_SIZE + xy[0],
                         (j + table.getColumnsMax() - columns[i].length) * CELL_SIZE + xy[1], LINE_PAINT);
             }
         }
 
-        int[][] rows = table.getRows();
+        CurrentCrosswordState.ColoredValue[][] rows = table.getRows();
 
         for (int i = 0; i < rows.length; i++) {
             for (int j = 0; j < rows[i].length; j++) {
-                float[] xy = countCentreOfTheNumber(rows[i][j] + "", 0, 0, CELL_SIZE, CELL_SIZE, LINE_PAINT);
-                canvas.drawNumber(offsetX, offsetY + aboveHeaderSize, rows[i][j],
+                float[] xy = countCentreOfTheNumber(rows[i][j].getValue() + "", 0, 0, CELL_SIZE, CELL_SIZE, LINE_PAINT);
+                LINE_PAINT.setColor(rows[i][j].getColor());
+                canvas.drawNumber(offsetX, offsetY + aboveHeaderSize, rows[i][j].getValue(),
                         (j + table.getRowsMax() - rows[i].length) * CELL_SIZE + xy[0],
                         i * CELL_SIZE + xy[1], LINE_PAINT);
             }
@@ -75,6 +77,9 @@ public class CrosswordDrawer {
 
         drawNumbers(canvas, table);
 
+        LINE_PAINT.setColor(Color.BLACK);
+        LINE_PAINT.setStyle(Paint.Style.FILL);
+
         for (int i = 0; i <= table.getHeight() * CELL_SIZE; i += CELL_SIZE) {
             canvas.drawLine(offsetX, offsetY + aboveHeaderSize,
                     0, i, table.getWidth() * CELL_SIZE + leftHeaderSize, i, LINE_PAINT);
@@ -89,15 +94,17 @@ public class CrosswordDrawer {
         drawBackground(canvas, table);
         for (int i = 0; i < table.getWidth(); i++) {
             for (int j = 0; j < table.getHeight(); j++) {
-                if (table.getField(i, j) == 1) {
+                LINE_PAINT.setColor(table.getField(i, j).getColor());
+                if (table.getField(i, j).getValue() == 1) {
                     canvas.drawCross(offsetX + leftHeaderSize, offsetY + aboveHeaderSize,
                             i * CELL_SIZE, j * CELL_SIZE,
                             (i + 1) * CELL_SIZE, (j + 1) * CELL_SIZE, LINE_PAINT);
-                } else if (table.getField(i, j) == 2) {
+                } else if (table.getField(i, j).getValue() == 2) {
                     canvas.drawSquare(offsetX + leftHeaderSize, offsetY + aboveHeaderSize,
                             i * CELL_SIZE, j * CELL_SIZE,
                             (i + 1) * CELL_SIZE, (j + 1) * CELL_SIZE, LINE_PAINT);
                 }
+                LINE_PAINT.setColor(Color.BLACK);
             }
         }
     }

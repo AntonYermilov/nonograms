@@ -1,24 +1,28 @@
 package ru.spbau.nonograms.local_database;
 
+import android.graphics.Color;
+
+import java.io.Serializable;
+
 /**
  * Stores current state of the crossword.
  * Current field and useful info to display crossword.
  */
-public class CurrentCrosswordState {
+public class CurrentCrosswordState implements Serializable {
 
     public static final int FILLED_CELL = 2;
 
     private int height;
     private int width;
 
-    private int[][] rows;
+    private ColoredValue[][] rows;
     private int rowsMax;
     private int columnsMax;
-    private int[][] columns;
+    private ColoredValue[][] columns;
 
-    private int[][] field;
+    private ColoredValue[][] field;
 
-    public CurrentCrosswordState(int[][] rows, int[][] columns, int[][] lastField) {
+    public CurrentCrosswordState(ColoredValue[][] rows, ColoredValue[][] columns, ColoredValue[][] lastField) {
         height = rows.length;
         width = columns.length;
         this.rows = copyDoubleArray(rows);
@@ -26,7 +30,12 @@ public class CurrentCrosswordState {
         if (lastField != null) {
             field = copyDoubleArray(lastField);
         } else {
-            field = new int[width][height];
+            field = new ColoredValue[width][height];
+            for (int i = 0; i < width; i++) {
+                for (int j = 0; j < height; j++) {
+                    field[i][j] = new ColoredValue(0, Color.WHITE);
+                }
+            }
         }
         for (int i = 0; i < rows.length; i++) {
             rowsMax = Math.max(rowsMax, rows[i].length);
@@ -44,19 +53,19 @@ public class CurrentCrosswordState {
         return width;
     }
 
-    public int getField(int i, int j) {
+    public ColoredValue getField(int i, int j) {
         return field[i][j];
     }
 
-    public void setField(int i, int j, int value) {
+    public void setField(int i, int j, ColoredValue value) {
         field[i][j] = value;
     }
 
-    public int[][] getRows() {
+    public ColoredValue[][] getRows() {
         return rows;
     }
 
-    public int[][] getColumns() {
+    public ColoredValue[][] getColumns() {
         return columns;
     }
 
@@ -68,14 +77,32 @@ public class CurrentCrosswordState {
         return columnsMax;
     }
 
-    private static int[][] copyDoubleArray(int[][] arr) {
-        int[][] res = new int[arr.length][];
+    private static ColoredValue[][] copyDoubleArray(ColoredValue[][] arr) {
+        ColoredValue[][] res = new ColoredValue[arr.length][];
         for (int i = 0; i < arr.length; i++) {
-            res[i] = new int[arr[i].length];
+            res[i] = new ColoredValue[arr[i].length];
             for (int j = 0; j < arr[i].length; j++) {
-                res[i][j] = arr[i][j];
+                res[i][j] = new ColoredValue(arr[i][j].getValue(), arr[i][j].getColor());
             }
         }
         return res;
+    }
+
+    public static class ColoredValue implements Serializable {
+        private int value;
+        private int color;
+
+        public ColoredValue(int value, int color) {
+            this.value = value;
+            this.color = color;
+        }
+
+        public int getValue() {
+            return value;
+        }
+
+        public int getColor() {
+            return color;
+        }
     }
 }

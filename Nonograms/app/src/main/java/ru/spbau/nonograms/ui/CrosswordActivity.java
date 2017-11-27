@@ -1,6 +1,7 @@
 package ru.spbau.nonograms.ui;
 
 import android.graphics.Canvas;
+import android.graphics.Color;
 import android.graphics.Typeface;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
@@ -13,6 +14,8 @@ import android.view.View;
 import android.widget.Button;
 import android.widget.TextView;
 
+import java.io.IOException;
+
 import ru.spbau.nonograms.R;
 import ru.spbau.nonograms.controller.Controller;
 import ru.spbau.nonograms.local_database.CurrentCrosswordState;
@@ -23,24 +26,22 @@ public class CrosswordActivity extends AppCompatActivity implements SurfaceHolde
 
     private SurfaceHolder surfaceHolder;
 
-    CurrentCrosswordState current = new CurrentCrosswordState(new int[][] {
-            {1, 1},
-            {1, 1, 1},
-            {1, 1},
-            {1, 1},
-            {1}
-    }, new int[][] {
-            {2},
-            {1, 1},
-            {1, 1},
-            {1, 1},
-            {2}
-    }, null);
+    private CurrentCrosswordState current;
+    private String filename;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_crossword);
+
+        filename = getIntent().getStringExtra("Data");
+        try {
+            current = Controller.getLocalCrosswordByFilename(filename);
+        } catch (IOException e) {
+            e.printStackTrace();
+        } catch (ClassNotFoundException e) {
+            e.printStackTrace();
+        }
 
         final SurfaceView surface = (SurfaceView) findViewById(R.id.surfaceView);
 
@@ -66,6 +67,17 @@ public class CrosswordActivity extends AppCompatActivity implements SurfaceHolde
                 info.show();
             }
         });
+    }
+
+    @Override
+    protected void onPause() {
+        super.onPause();
+
+        try {
+            Controller.updateLocalyByFilename(filename, current);
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
     }
 
     @Override
@@ -95,7 +107,8 @@ public class CrosswordActivity extends AppCompatActivity implements SurfaceHolde
                 int x = (int)Math.floor((mX - CrosswordDrawer.getSumOffsetX()) / CrosswordDrawer.CELL_SIZE);
                 int y = (int)Math.floor((mY - CrosswordDrawer.getSumOffsetY()) / CrosswordDrawer.CELL_SIZE);
                 if (x < current.getWidth() && x >= 0 && y < current.getHeight() && y >= 0) {
-                    current.setField(x, y, (current.getField(x, y) + 1) % 3);
+                    current.setField(x, y, new CurrentCrosswordState.ColoredValue(
+                            (current.getField(x, y).getValue() + 1) % 3, Color.BLACK));
                 }
                 redraw();
             }

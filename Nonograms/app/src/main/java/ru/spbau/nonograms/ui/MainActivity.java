@@ -7,6 +7,7 @@ import android.view.View;
 import android.widget.Button;
 
 import ru.spbau.nonograms.R;
+import ru.spbau.nonograms.controller.Controller;
 
 public class MainActivity extends AppCompatActivity {
 
@@ -15,6 +16,7 @@ public class MainActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
+        Controller.initDatabase(getApplicationContext());
 
         Button playMenuButton = (Button) findViewById(R.id.PlayMenuButton);
         playMenuButton.setOnClickListener(new View.OnClickListener() {
