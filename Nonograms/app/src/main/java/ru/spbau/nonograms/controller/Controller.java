@@ -37,18 +37,7 @@ public class Controller {
     }
 
     public static boolean checkCorrectness(CurrentCrosswordState current) {
-        ArrayList<NonogramImage.Segment>[] rows = makeSegmentArrayList(current.getRows());
-        ArrayList<NonogramImage.Segment>[] columns = makeSegmentArrayList(current.getColumns());
-        NonogramImage toCheck = new NonogramImage(current.getHeight(), current.getWidth(),
-                Color.WHITE, rows, columns);
-        int[][] field = new int[current.getHeight()][current.getWidth()];
-        for (int i = 0; i < current.getHeight(); i++) {
-            for (int j = 0; j < current.getWidth(); j++) {
-                field[i][j] = current.getField(j, i).getValue() == CurrentCrosswordState.FILLED_CELL ?
-                        current.getField(j, i).getColor() : Color.WHITE;
-            }
-        }
-        return NonogramLogic.checkNonogram(field, toCheck);
+        return NonogramLogic.checkNonogram(current);
     }
 
     public static void initDatabase(Context context) {
@@ -65,19 +54,6 @@ public class Controller {
 
     public static void updateLocalyByFilename(String filename, CurrentCrosswordState state) throws IOException {
         database.updateByFilename(filename, state);
-    }
-
-    private static ArrayList<NonogramImage.Segment>[] makeSegmentArrayList(
-            CurrentCrosswordState.ColoredValue[][] old) {
-        ArrayList<NonogramImage.Segment>[] result = new ArrayList[old.length];
-        for (int i = 0; i < old.length; i++) {
-            result[i] = new ArrayList<>();
-            for (int j = 0; j < old[i].length; j++) {
-                NonogramImage.Segment block = new NonogramImage.Segment(old[i][j].getValue(), 1, old[i][j].getColor());
-                result[i].add(block);
-            }
-        }
-        return result;
     }
 
     private static Bitmap getBitmap(ImageView givenImage) {
