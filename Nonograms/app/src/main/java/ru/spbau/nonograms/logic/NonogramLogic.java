@@ -1,6 +1,7 @@
 package ru.spbau.nonograms.logic;
 
 import android.graphics.Bitmap;
+import android.graphics.Color;
 
 import ru.spbau.nonograms.local_database.CurrentCrosswordState;
 
@@ -23,6 +24,11 @@ public class NonogramLogic {
      * @return bitmap image that shows how created nonogram looks like.
      */
     public static Bitmap createNonogram(Bitmap image, int width, int height, int colors) {
+        if (image.getWidth() < width || image.getHeight() < height) {
+            lastNonogram = null;
+            return null;
+        }
+
         int previousWidth = image.getWidth();
         int previousHeight = image.getHeight();
 
@@ -31,6 +37,8 @@ public class NonogramLogic {
             previousWidth = (int) (previousWidth / scale);
             previousHeight = (int) (previousHeight / scale);
         }
+
+        System.err.println(image.getWidth() + " " + image.getHeight());
 
         System.err.println("Decreasing size");
         image = ImageTransformer.decreaseSize(image, width, height, false, true);
@@ -79,6 +87,40 @@ public class NonogramLogic {
         NonogramImage image = new NonogramImage(new int[][]{{0, 1, 0, 1, 0},
                 {1, 0, 1, 0, 1}, {1, 0, 0, 0, 1}, {0, 1, 0, 1, 0}, {0, 0, 1, 0, 0}}, 0);
         System.err.println(image.toJSON());
+
+        CurrentCrosswordState.ColoredValue[] black = new CurrentCrosswordState.ColoredValue[]{
+                new CurrentCrosswordState.ColoredValue(1, Color.BLACK),
+                new CurrentCrosswordState.ColoredValue(2, Color.BLACK)};
+
+        CurrentCrosswordState.ColoredValue b = new CurrentCrosswordState.ColoredValue(
+                CurrentCrosswordState.FILLED_CELL, Color.BLACK);
+        CurrentCrosswordState.ColoredValue w = new CurrentCrosswordState.ColoredValue(0, Color.WHITE);
+
+        CurrentCrosswordState.ColoredValue[][] field = new CurrentCrosswordState.ColoredValue[][]{
+                {w, b, b, w, w},
+                {b, w, w, b, w},
+                {w, b, w, w, b},
+                {b, w, w, b, w},
+                {w, b, b, w, w}
+        };
+        CurrentCrosswordState.ColoredValue[][] rows = new CurrentCrosswordState.ColoredValue[][]{
+                {black[0], black[0]},
+                {black[0], black[0], black[0]},
+                {black[0], black[0]},
+                {black[0], black[0]},
+                {black[0]}
+        };
+        CurrentCrosswordState.ColoredValue[][] columns = new CurrentCrosswordState.ColoredValue[][]{
+                {black[1]},
+                {black[0], black[0]},
+                {black[0], black[0]},
+                {black[0], black[0]},
+                {black[1]}
+        };
+
+        CurrentCrosswordState state = new CurrentCrosswordState(rows, columns,
+                new int[]{Color.BLACK}, field);
+        System.err.println(NonogramChecker.check(state));
     }
 
 }

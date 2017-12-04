@@ -28,7 +28,6 @@ class ImageTransformer {
         for (int x = 0; x < image.getWidth(); x++) {
             for (int y = 0; y < image.getHeight(); y++) {
                 int color = image.getPixel(x, y);
-                int a = Color.alpha(color);
                 int r = Color.red(color);
                 int g = Color.green(color);
                 int b = Color.blue(color);
@@ -37,7 +36,7 @@ class ImageTransformer {
                 grayTone = getOptimalColor(grayTone, mainColors);
 
                 backgroundColor = Math.max(backgroundColor, grayTone);
-                image.setPixel(x, y, getARGB(a, grayTone, grayTone, grayTone));
+                image.setPixel(x, y, getARGB(255, grayTone, grayTone, grayTone));
             }
         }
         return getARGB(255, backgroundColor, backgroundColor, backgroundColor);
