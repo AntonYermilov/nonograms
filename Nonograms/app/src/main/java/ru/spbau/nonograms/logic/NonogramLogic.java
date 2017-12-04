@@ -1,7 +1,6 @@
 package ru.spbau.nonograms.logic;
 
 import android.graphics.Bitmap;
-import android.graphics.Matrix;
 
 /**
  * Supports creating and checking nonograms.
@@ -75,6 +74,12 @@ public class NonogramLogic {
         boolean result = new MulticolorNonogramSolver(image).solve();
         System.err.println("Has solution: " + result);
         return result;
+    }
+
+    public static void main(String[] args) {
+        NonogramImage image = new NonogramImage(new int[][]{{0, 1, 0, 1, 0},
+                {1, 0, 1, 0, 1}, {1, 0, 0, 0, 1}, {0, 1, 0, 1, 0}, {0, 0, 1, 0, 0}}, 0);
+        System.err.println(image.toJSON());
     }
 
 }
