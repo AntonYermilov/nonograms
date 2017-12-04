@@ -27,7 +27,7 @@ class NonogramChecker {
                     r++;
                 }
                 if (field[i][l] != image.getBackgroundColor()) {
-                    if (seg == row.size() || field[i][l] != row.get(seg).getRGBColor()) {
+                    if (seg == row.size() || field[i][l] != image.getRGBColor(row.get(seg).getColorType())) {
                         return false;
                     }
                     seg++;
@@ -47,7 +47,7 @@ class NonogramChecker {
                     r++;
                 }
                 if (field[l][i] != image.getBackgroundColor()) {
-                    if (seg == column.size() || field[l][i] != column.get(seg).getRGBColor()) {
+                    if (seg == column.size() || field[l][i] != image.getRGBColor(column.get(seg).getColorType())) {
                         return false;
                     }
                     seg++;

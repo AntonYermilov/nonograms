@@ -2,6 +2,9 @@ package ru.spbau.nonograms.logic;
 
 import android.preference.PreferenceActivity;
 
+import com.google.gson.Gson;
+import com.google.gson.GsonBuilder;
+
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -21,48 +24,9 @@ public class NonogramImage implements Serializable {
     private List<Segment>[] columns;
 
     private int backgroundColor;
-    private Color[] usedColors;
-
-    public NonogramImage(int height, int width, int backgroundColor,
-                         ArrayList<Segment>[] rows, ArrayList<Segment>[] columns) {
-        this.height = height;
-        this.width = width;
-        this.backgroundColor = backgroundColor;
-
-        HashMap<Integer, Integer> colorId = new HashMap<>();
-        colorId.put(backgroundColor, 0);
-
-        this.rows = new List[height];
-        for (int i = 0; i < height; i++) {
-            this.rows[i] = new ArrayList<>(rows[i]);
-            for (Segment seg : rows[i]) {
-                if (!colorId.containsKey(seg.getRGBColor())) {
-                    colorId.put(seg.getRGBColor(), seg.getColorType());
-                    colors = Math.max(colors, seg.getColorType());
-                }
-            }
-        }
-        this.columns = new List[width];
-        for (int i = 0; i < width; i++) {
-            this.columns[i] = new ArrayList<>(columns[i]);
-            for (Segment seg : columns[i]) {
-                if (!colorId.containsKey(seg.getRGBColor())) {
-                    colorId.put(seg.getRGBColor(), seg.getColorType());
-                    colors = Math.max(colors, seg.getColorType());
-                }
-            }
-        }
-
-        if (colors > MAX_COLORS || colors + 1 != colorId.size()) {
-            throw new ColorOutOfRangeException();
-        }
-
-        usedColors = new Color[colorId.size()];
-        int nextColor = 0;
-        for (int rgbColor : colorId.keySet()) {
-            usedColors[nextColor++] = new Color(colorId.get(rgbColor), rgbColor);
-        }
-    }
+    private int[] usedRGBColors;
+    private HashMap<Integer, Integer> colorId;
+    private int[] colorRGB;
 
     /**
      * Receives the resulting look of nonogram as two-dimensional array
@@ -81,7 +45,8 @@ public class NonogramImage implements Serializable {
 
         this.backgroundColor = backgroundColor;
 
-        HashMap<Integer, Integer> colorId = new HashMap<>();
+        colorId = new HashMap<>();
+
         colorId.put(backgroundColor, 0);
 
         for (int i = 0; i < height; i++) {
@@ -96,10 +61,12 @@ public class NonogramImage implements Serializable {
             throw new ColorOutOfRangeException();
         }
 
-        usedColors = new Color[colorId.size()];
+        colorRGB = new int[colors + 1];
+        usedRGBColors = new int[colorId.size()];
         int nextColor = 0;
         for (int rgbColor : colorId.keySet()) {
-            usedColors[nextColor++] = new Color(colorId.get(rgbColor), rgbColor);
+            colorRGB[colorId.get(rgbColor)] = rgbColor;
+            usedRGBColors[nextColor++] = rgbColor;
         }
 
         rows = new List[height];
@@ -110,7 +77,7 @@ public class NonogramImage implements Serializable {
                     r++;
                 }
                 if (field[i][l] != backgroundColor) {
-                    rows[i].add(new Segment(r - l, colorId.get(field[i][l]), field[i][l]));
+                    rows[i].add(new Segment(r - l, colorId.get(field[i][l])));
                 }
             }
         }
@@ -123,7 +90,7 @@ public class NonogramImage implements Serializable {
                     r++;
                 }
                 if (field[l][i] != backgroundColor) {
-                    columns[i].add(new Segment(r - l, colorId.get(field[l][i]), field[l][i]));
+                    columns[i].add(new Segment(r - l, colorId.get(field[l][i])));
                 }
             }
         }
@@ -183,16 +150,39 @@ public class NonogramImage implements Serializable {
      * Returns the array of used in nonogram colors.
      * @return the array of used in nonogram colors
      */
-    public Color[] getUsedColors() {
-        return usedColors;
+    public int[] getUsedColors() {
+        return usedRGBColors;
+    }
+
+    /**
+     * Returns color id by it's RGB value.
+     * @param rgbColor RGB value of the color
+     * @return color id by it's RGB value
+     */
+    public int getColorId(int rgbColor) {
+        return colorId.get(rgbColor);
+    }
+
+    /**
+     * Returns RGB value of the color by it's id.
+     * @param colorId id of the color
+     * @return RGB value of the color by it's id
+     */
+    public int getRGBColor(int colorId) {
+        return colorRGB[colorId];
+    }
+
+    public String toJSON() {
+        Gson gson = new GsonBuilder().create();
+        return gson.toJson(this);
     }
 
     /**
      * Stores information about each block of sequential cells of same color.
      */
-    public static class Segment {
+    public class Segment {
         private int size;
-        private Color color;
+        private int color;
 
         /**
          * Receives the size of block of sequential cells of same color, the type of
@@ -203,11 +193,10 @@ public class NonogramImage implements Serializable {
          *
          * @param size      the size of block
          * @param colorType the type of color
-         * @param rgbColor  the color in RGB format
          */
-        public Segment(int size, int colorType, int rgbColor) {
+        public Segment(int size, int colorType) {
             this.size = size;
-            this.color = new Color(colorType, rgbColor);
+            this.color = colorType;
         }
 
         /**
@@ -223,49 +212,7 @@ public class NonogramImage implements Serializable {
          * @return the type of the color
          */
         public int getColorType() {
-            return color.colorType;
-        }
-
-        /**
-         * Returns RGB value of the color.
-         * @return RGB value of the color
-         */
-        public int getRGBColor() {
-            return color.rgbColor;
-        }
-    }
-
-    /**
-     * Stores information about color.
-     */
-    public static class Color {
-        private int colorType;
-        private int rgbColor;
-
-        /**
-         * Creates color that stores it's type and RGB value.
-         * @param colorType the type of the color
-         * @param rgbColor  RGB value of the color
-         */
-        public Color(int colorType, int rgbColor) {
-            this.colorType = colorType;
-            this.rgbColor = rgbColor;
-        }
-
-        /**
-         * Returns the type of the color.
-         * @return the type of the color
-         */
-        public int getColorType() {
-            return colorType;
-        }
-
-        /**
-         * Returns RGB value of the color.
-         * @return RGB value of the color
-         */
-        public int getRGBColor() {
-            return rgbColor;
+            return color;
         }
     }
 
