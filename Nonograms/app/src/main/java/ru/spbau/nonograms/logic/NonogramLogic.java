@@ -2,6 +2,8 @@ package ru.spbau.nonograms.logic;
 
 import android.graphics.Bitmap;
 
+import ru.spbau.nonograms.local_database.CurrentCrosswordState;
+
 /**
  * Supports creating and checking nonograms.
  */
@@ -54,15 +56,12 @@ public class NonogramLogic {
     }
 
     /**
-     * Checks if specified field of RGB colors satisfies the correct nonogram.
-     *
-     * @param field    specified field, each element stores color of the corresponding cell
-     * @param nonogram nonogram image to check with
-     *
-     * @return {@code true} if specified field satisfies correct nonogram; {@code false} otherwise
+     * Checks if specified nonogram is solved correctly
+     * @param state current nonogram state
+     * @return {@code true} if specified nonogram is solved correctly; {@code false} otherwise
      */
-    public static boolean checkNonogram(int[][] field, NonogramImage nonogram) {
-        return NonogramChecker.check(field, nonogram);
+    public static boolean checkNonogram(CurrentCrosswordState state) {
+        return NonogramChecker.check(state);
     }
 
     /**

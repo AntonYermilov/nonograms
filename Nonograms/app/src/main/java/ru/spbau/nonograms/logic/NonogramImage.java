@@ -1,7 +1,5 @@
 package ru.spbau.nonograms.logic;
 
-import android.preference.PreferenceActivity;
-
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 
