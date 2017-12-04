@@ -28,6 +28,8 @@ public class CrosswordListActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_crossword_list);
+
+        boolean colored = getIntent().getBooleanExtra("colored", false);
         try {
             crosswordList = Controller.getLocalCrosswords();
         } catch (Exception e) {
@@ -38,7 +40,12 @@ public class CrosswordListActivity extends AppCompatActivity {
         }
         list = new ArrayList<>();
         for (int i = 0; i < crosswordList.size(); i++) {
-            list.add(crosswordList.get(i).getFilename());
+            if (crosswordList.get(i).getNumberOfColors() == 1 && !colored) {
+                list.add(crosswordList.get(i).getFilename());
+            }
+            if (crosswordList.get(i).getNumberOfColors() > 1 && colored) {
+                list.add(crosswordList.get(i).getFilename());
+            }
         }
         ArrayAdapter<String> adapter = new ArrayAdapter<String>(
                 this, android.R.layout.simple_list_item_1, list);

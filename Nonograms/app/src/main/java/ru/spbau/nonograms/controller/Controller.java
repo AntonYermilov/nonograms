@@ -8,7 +8,9 @@ import android.widget.ImageView;
 
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.Random;
+import java.util.TreeSet;
 
 import ru.spbau.nonograms.local_database.CrosswordDBHelper;
 import ru.spbau.nonograms.local_database.CrosswordInfo;

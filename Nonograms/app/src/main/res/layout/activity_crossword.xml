@@ -15,13 +15,13 @@
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintTop_toTopOf="parent"
         app:layout_constraintVertical_bias="0.321"
-        app:layout_constraintHorizontal_bias="0.545"
-        tools:layout_editor_absoluteX="31dp" />
+        app:layout_constraintHorizontal_bias="0.545" />
 
     <Button
         android:id="@+id/checkButton"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        android:layout_weight="1"
         android:fontFamily="casual"
         android:text="Check"
         app:layout_constraintBottom_toBottomOf="parent"
@@ -30,4 +30,17 @@
         app:layout_constraintRight_toRightOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/surfaceView"
         app:layout_constraintVertical_bias="0.673" />
+
+    <LinearLayout
+        android:id="@+id/ColorField"
+        android:layout_width="247dp"
+        android:layout_height="58dp"
+        android:orientation="horizontal"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintHorizontal_bias="0.484"
+        app:layout_constraintLeft_toLeftOf="parent"
+        app:layout_constraintRight_toLeftOf="@+id/checkButton"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintVertical_bias="0.964"></LinearLayout>
+
 </android.support.constraint.ConstraintLayout>

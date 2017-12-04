@@ -2,16 +2,21 @@ package ru.spbau.nonograms.ui;
 
 import android.graphics.Canvas;
 import android.graphics.Color;
+import android.graphics.Point;
 import android.graphics.Typeface;
+import android.graphics.drawable.ColorDrawable;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.support.v7.widget.LinearLayoutCompat;
+import android.util.Log;
 import android.view.Gravity;
 import android.view.MotionEvent;
 import android.view.SurfaceHolder;
 import android.view.SurfaceView;
 import android.view.View;
 import android.widget.Button;
+import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import java.io.IOException;
@@ -28,6 +33,7 @@ public class CrosswordActivity extends AppCompatActivity implements SurfaceHolde
 
     private CurrentCrosswordState current;
     private String filename;
+    private int lastColor;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -67,6 +73,31 @@ public class CrosswordActivity extends AppCompatActivity implements SurfaceHolde
                 info.show();
             }
         });
+
+        final int[] colors = current.getColors();
+        lastColor = Color.BLACK;
+        if (colors.length > 1) {
+            LinearLayout colorField = (LinearLayout) findViewById(R.id.ColorField);
+            Button[] colorButtons = new Button[colors.length];
+            lastColor = colors[0];
+            Point size = new Point();
+            getWindowManager().getDefaultDisplay().getSize(size);
+            int width = size.x / 10 * 7;
+            for (int i = 0; i < colors.length; i++) {
+                colorButtons[i] = new Button(this);
+                colorButtons[i].setBackgroundColor(colors[i]);
+                colorButtons[i].setMinimumWidth(0);
+                colorButtons[i].setWidth(width / (colors.length));
+                colorButtons[i].setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View view) {
+                        lastColor = ((ColorDrawable)(((Button) view).getBackground())).getColor();
+                    }
+                });
+                Log.i("Crossword activity: ", colorButtons[i].getWidth() + " " + width);
+                colorField.addView(colorButtons[i]);
+            }
+        }
     }
 
     @Override
@@ -108,7 +139,7 @@ public class CrosswordActivity extends AppCompatActivity implements SurfaceHolde
                 int y = (int)Math.floor((mY - CrosswordDrawer.getSumOffsetY()) / CrosswordDrawer.CELL_SIZE);
                 if (x < current.getWidth() && x >= 0 && y < current.getHeight() && y >= 0) {
                     current.setField(x, y, new CurrentCrosswordState.ColoredValue(
-                            (current.getField(x, y).getValue() + 1) % 3, Color.BLACK));
+                            (current.getField(x, y).getValue() + 1) % 3, lastColor));
                 }
                 redraw();
             }

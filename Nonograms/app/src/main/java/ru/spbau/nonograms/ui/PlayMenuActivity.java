@@ -21,6 +21,17 @@ public class PlayMenuActivity extends AppCompatActivity {
             @Override
             public void onClick(View view) {
                 Intent intent = new Intent(PlayMenuActivity.this, CrosswordListActivity.class);
+                intent.putExtra("colored", false);
+                startActivity(intent);
+            }
+        });
+
+        Button coloredButton = (Button) findViewById(R.id.ColorButton);
+        coloredButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                Intent intent = new Intent(PlayMenuActivity.this, CrosswordListActivity.class);
+                intent.putExtra("colored", true);
                 startActivity(intent);
             }
         });

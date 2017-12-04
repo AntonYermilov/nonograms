@@ -19,6 +19,7 @@ public class CrosswordDBHelper extends SQLiteOpenHelper {
     public static final int DATABASE_VERSION = 1;
     public static final String DATABASE_NAME = "CrosswordList";
     public static final String COLUMN_ID = "id";
+    public static final String COLUMN_NUMBER_OF_COLORS = "number_of_colors";
     public static final String COLUMN_CROSSWORD_NAME = "crossword_name";
 
     private Context context;
@@ -32,11 +33,13 @@ public class CrosswordDBHelper extends SQLiteOpenHelper {
     public void onCreate(SQLiteDatabase db) {
         db.execSQL("CREATE TABLE IF NOT EXISTS " + DATABASE_NAME + " (" +
                 COLUMN_ID + " INTEGER PRIMARY KEY AUTOINCREMENT," +
+                COLUMN_NUMBER_OF_COLORS + " INTEGER," +
                  COLUMN_CROSSWORD_NAME + " TEXT )");
         for (int i = 0; i < StandartCrosswords.toAdd.length; i++) {
             try {
                 ContentValues values = new ContentValues();
                 values.put(COLUMN_CROSSWORD_NAME, "standart");
+                values.put(COLUMN_NUMBER_OF_COLORS, StandartCrosswords.toAdd[i].getColors().length);
                 long rowId = db.insert(DATABASE_NAME, null, values);
                 try (ObjectOutputStream outputStream =
                              new ObjectOutputStream(context.openFileOutput("standart" + rowId, Context.MODE_PRIVATE))) {
@@ -104,7 +107,8 @@ public class CrosswordDBHelper extends SQLiteOpenHelper {
                 do {
                     String name = cursor.getString(cursor.getColumnIndex(COLUMN_CROSSWORD_NAME));
                     int id = cursor.getInt(cursor.getColumnIndex(COLUMN_ID));
-                    CrosswordInfo info = new CrosswordInfo(name + id);
+                    int colors = cursor.getInt(cursor.getColumnIndex(COLUMN_NUMBER_OF_COLORS));
+                    CrosswordInfo info = new CrosswordInfo(name + id, colors);
                     result.add(info);
                 } while (cursor.moveToNext());
             }

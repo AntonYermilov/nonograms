@@ -3,6 +3,8 @@ package ru.spbau.nonograms.local_database;
 import android.graphics.Color;
 
 import java.io.Serializable;
+import java.util.Arrays;
+import java.util.TreeSet;
 
 /**
  * Stores current state of the crossword.
@@ -19,10 +21,10 @@ public class CurrentCrosswordState implements Serializable {
     private int rowsMax;
     private int columnsMax;
     private ColoredValue[][] columns;
-
+    private int colors[];
     private ColoredValue[][] field;
 
-    public CurrentCrosswordState(ColoredValue[][] rows, ColoredValue[][] columns, ColoredValue[][] lastField) {
+    public CurrentCrosswordState(ColoredValue[][] rows, ColoredValue[][] columns, int colors[], ColoredValue[][] lastField) {
         height = rows.length;
         width = columns.length;
         this.rows = copyDoubleArray(rows);
@@ -37,12 +39,17 @@ public class CurrentCrosswordState implements Serializable {
                 }
             }
         }
+        this.colors = Arrays.copyOf(colors, colors.length);
         for (int i = 0; i < rows.length; i++) {
             rowsMax = Math.max(rowsMax, rows[i].length);
         }
         for (int i = 0; i < columns.length; i++) {
             columnsMax = Math.max(columnsMax, columns[i].length);
         }
+    }
+
+    public int[] getColors() {
+        return colors;
     }
 
     public int getHeight() {

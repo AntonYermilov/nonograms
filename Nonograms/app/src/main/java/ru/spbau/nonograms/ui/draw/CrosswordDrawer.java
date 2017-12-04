@@ -94,17 +94,17 @@ public class CrosswordDrawer {
         drawBackground(canvas, table);
         for (int i = 0; i < table.getWidth(); i++) {
             for (int j = 0; j < table.getHeight(); j++) {
-                LINE_PAINT.setColor(table.getField(i, j).getColor());
                 if (table.getField(i, j).getValue() == 1) {
                     canvas.drawCross(offsetX + leftHeaderSize, offsetY + aboveHeaderSize,
                             i * CELL_SIZE, j * CELL_SIZE,
                             (i + 1) * CELL_SIZE, (j + 1) * CELL_SIZE, LINE_PAINT);
                 } else if (table.getField(i, j).getValue() == 2) {
+                    LINE_PAINT.setColor(table.getField(i, j).getColor());
                     canvas.drawSquare(offsetX + leftHeaderSize, offsetY + aboveHeaderSize,
                             i * CELL_SIZE, j * CELL_SIZE,
                             (i + 1) * CELL_SIZE, (j + 1) * CELL_SIZE, LINE_PAINT);
+                    LINE_PAINT.setColor(Color.BLACK);
                 }
-                LINE_PAINT.setColor(Color.BLACK);
             }
         }
     }
