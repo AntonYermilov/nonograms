@@ -37,6 +37,14 @@ public class Controller {
     }
 
     public static boolean checkCorrectness(CurrentCrosswordState current) {
+        for (int i = 0; i < current.getWidth(); i++) {
+            for (int j = 0; j < current.getHeight(); j++) {
+                if (current.getField(i, j).getValue() != CurrentCrosswordState.FILLED_CELL) {
+                    current.setField(i, j, new CurrentCrosswordState.ColoredValue(
+                            current.getField(i, j).getValue(), Color.WHITE));
+                }
+            }
+        }
         return NonogramLogic.checkNonogram(current);
     }
 

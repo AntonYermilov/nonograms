@@ -23,7 +23,7 @@ class NonogramChecker {
                 while (xr < width && state.getField(xl, y).getColor() == state.getField(xr, y).getColor()) {
                     xr++;
                 }
-                if (state.getField(xl, y).getValue() == CurrentCrosswordState.FILLED_CELL) {
+                if (state.getField(xl, y).getValue() != CurrentCrosswordState.FILLED_CELL) {
                     continue;
                 }
                 if (seg == row.length || state.getField(xl, y).getColor() != row[seg].getColor()
@@ -44,7 +44,7 @@ class NonogramChecker {
                 while (yr < height && state.getField(x, yl).getColor() == state.getField(x, yr).getColor()) {
                     yr++;
                 }
-                if (state.getField(x, yl).getValue() == CurrentCrosswordState.FILLED_CELL) {
+                if (state.getField(x, yl).getValue() != CurrentCrosswordState.FILLED_CELL) {
                     continue;
                 }
                 if (seg == column.length || state.getField(x, yl).getColor() != column[seg].getColor()
