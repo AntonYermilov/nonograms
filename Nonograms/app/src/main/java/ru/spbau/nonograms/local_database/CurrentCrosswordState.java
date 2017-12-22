@@ -24,6 +24,15 @@ public class CurrentCrosswordState implements Serializable {
     private int colors[];
     private ColoredValue[][] field;
 
+    /**
+     * Creates a current crossword state object, using info about
+     * a crossword itself (which numbers of which colors are in the rows and columns), an array of used colors
+     * and a last field state. (optional)
+     * @param rows numbers and their colors in rows
+     * @param columns numbers and their color in columns
+     * @param colors all columns used in crossword
+     * @param lastField last state field of the crossword. Can be {@code null}
+     */
     public CurrentCrosswordState(ColoredValue[][] rows, ColoredValue[][] columns, int colors[], ColoredValue[][] lastField) {
         height = rows.length;
         width = columns.length;

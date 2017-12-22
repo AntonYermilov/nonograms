@@ -5,13 +5,17 @@ import android.graphics.Color;
 import android.graphics.Point;
 import android.graphics.Typeface;
 import android.graphics.drawable.ColorDrawable;
+import android.support.v4.view.GestureDetectorCompat;
+import android.support.v4.view.ScaleGestureDetectorCompat;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.support.v7.widget.LinearLayoutCompat;
 import android.util.Log;
+import android.view.GestureDetector;
 import android.view.Gravity;
 import android.view.MotionEvent;
+import android.view.ScaleGestureDetector;
 import android.view.SurfaceHolder;
 import android.view.SurfaceView;
 import android.view.View;
@@ -27,13 +31,20 @@ import ru.spbau.nonograms.local_database.CurrentCrosswordState;
 import ru.spbau.nonograms.ui.draw.CrosswordCanvas;
 import ru.spbau.nonograms.ui.draw.CrosswordDrawer;
 
-public class CrosswordActivity extends AppCompatActivity implements SurfaceHolder.Callback, View.OnTouchListener {
+public class CrosswordActivity extends AppCompatActivity implements SurfaceHolder.Callback,
+        View.OnTouchListener {
 
     private SurfaceHolder surfaceHolder;
 
     private CurrentCrosswordState current;
     private String filename;
     private int lastColor;
+    private GestureDetectorCompat generalDetector;
+    private ScaleGestureDetector scaleDetector;
+    private double motionStartX;
+    private double motionStartY;
+    private double scaleFactor = 1;
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -50,10 +61,13 @@ public class CrosswordActivity extends AppCompatActivity implements SurfaceHolde
         }
 
         final SurfaceView surface = (SurfaceView) findViewById(R.id.surfaceView);
-
+        generalDetector = new GestureDetectorCompat(this, new GestureDetector());
+        scaleDetector = new ScaleGestureDetector(this, new GestureDetector());
         surfaceHolder = surface.getHolder();
         surfaceHolder.addCallback(this);
         surface.setOnTouchListener(this);
+
+        CrosswordDrawer.staticInit();
 
         Button checkButton = (Button) findViewById(R.id.checkButton);
         checkButton.setOnClickListener(new View.OnClickListener() {
@@ -131,20 +145,8 @@ public class CrosswordActivity extends AppCompatActivity implements SurfaceHolde
 
     @Override
     public boolean onTouch(View view, MotionEvent motionEvent) {
-        double mX = motionEvent.getX();
-        double mY = motionEvent.getY();
-        switch (motionEvent.getAction()) {
-            case MotionEvent.ACTION_DOWN: {
-                int x = (int)Math.floor((mX - CrosswordDrawer.getSumOffsetX()) / CrosswordDrawer.CELL_SIZE);
-                int y = (int)Math.floor((mY - CrosswordDrawer.getSumOffsetY()) / CrosswordDrawer.CELL_SIZE);
-                if (x < current.getWidth() && x >= 0 && y < current.getHeight() && y >= 0) {
-                    current.setField(x, y, new CurrentCrosswordState.ColoredValue(
-                            (current.getField(x, y).getValue() + 1) % 3, lastColor));
-                }
-                redraw();
-            }
-
-        }
+        scaleDetector.onTouchEvent(motionEvent);
+        generalDetector.onTouchEvent(motionEvent);
         return true;
     }
 
@@ -154,4 +156,60 @@ public class CrosswordActivity extends AppCompatActivity implements SurfaceHolde
         CrosswordDrawer.drawTable(myCanvas, current);
         surfaceHolder.unlockCanvasAndPost(canvas);
     }
+
+    private class GestureDetector extends android.view.GestureDetector.SimpleOnGestureListener
+            implements ScaleGestureDetector.OnScaleGestureListener {
+
+        boolean scaling = false;
+
+        @Override
+        public boolean onScale(ScaleGestureDetector detector) {
+            Log.d("CrosswordActivity: ", "Scaling...");
+            scaleFactor *= detector.getScaleFactor();
+            scaleFactor = Math.round(scaleFactor * 100) / 100.0; // jitter
+            scaleFactor = Math.max(0.1, Math.min(2, scaleFactor));
+            CrosswordDrawer.recountScale(scaleFactor);
+            redraw();
+            return true;
+        }
+
+        @Override
+        public boolean onScaleBegin(ScaleGestureDetector scaleGestureDetector) {
+            scaling = true;
+            return true;
+        }
+
+        @Override
+        public void onScaleEnd(ScaleGestureDetector scaleGestureDetector) {
+            scaling = false;
+        }
+
+        @Override
+        public boolean onSingleTapUp(MotionEvent motionEvent) {
+            double mX = motionEvent.getX();
+            double mY = motionEvent.getY();
+            int x = (int)Math.floor((mX - CrosswordDrawer.getSumOffsetX()) / CrosswordDrawer.getCellSize());
+            int y = (int)Math.floor((mY - CrosswordDrawer.getSumOffsetY()) / CrosswordDrawer.getCellSize());
+            if (x < current.getWidth() && x >= 0 && y < current.getHeight() && y >= 0) {
+                current.setField(x, y, new CurrentCrosswordState.ColoredValue(
+                        (current.getField(x, y).getValue() + 1) % 3, lastColor));
+            }
+            redraw();
+            return true;
+        }
+
+        @Override
+        public boolean onScroll(MotionEvent motionEvent, MotionEvent motionEvent1, float distanceX, float distanceY) {
+            if (scaling) {
+                return false;
+            }
+            CrosswordDrawer.addToOffsetX((int)Math.round(-distanceX));
+            CrosswordDrawer.addToOffsetY((int)Math.round(-distanceY));
+            redraw();
+            return true;
+        }
+
+    }
+
+
 }
