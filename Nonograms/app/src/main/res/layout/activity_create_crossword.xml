@@ -1,0 +1,95 @@
+<?xml version="1.0" encoding="utf-8"?>
+<android.support.constraint.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context="ru.spbau.nonograms.ui.CreateCrosswordActivity">
+
+    <android.support.constraint.Guideline
+        android:id="@+id/guideline"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        app:layout_constraintGuide_percent="0.05"/>
+
+    <android.support.constraint.Guideline
+        android:id="@+id/guideline1"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        app:layout_constraintGuide_percent="0.95"/>
+
+    <GridLayout
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:columnCount="2"
+        android:rowCount="3"
+        app:layout_constraintLeft_toLeftOf="@+id/guideline"
+        app:layout_constraintRight_toRightOf="@+id/guideline1"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        tools:layout_editor_absoluteY="12dp"
+        tools:layout_editor_absoluteX="29dp">
+
+        <TextView
+            android:id="@+id/textView3"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_column="1"
+            android:layout_row="0"
+            android:fontFamily="casual"
+            android:text="@string/result_image_text"
+            android:textSize="18sp" />
+
+        <TextView
+            android:id="@+id/textView2"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_column="0"
+            android:layout_row="0"
+            android:fontFamily="casual"
+            android:text="@string/your_image_text"
+            android:textAlignment="center"
+            android:textSize="18sp" />
+
+        <Button
+            android:id="@+id/makeCrosswordButton"
+            android:layout_width="170dp"
+            android:layout_height="50dp"
+            android:layout_column="1"
+            android:layout_row="2"
+            android:fontFamily="casual"
+            android:text="@string/make_puzzle_text" />
+
+        <Button
+            android:id="@+id/uploadPictureButton"
+            android:layout_width="170dp"
+            android:layout_height="50dp"
+            android:layout_column="0"
+            android:layout_row="2"
+            android:fontFamily="casual"
+            android:text="@string/upload_picture_text" />
+
+        <ImageView
+            android:id="@+id/resultImage"
+            android:layout_width="170dp"
+            android:layout_height="330dp"
+            android:layout_column="1"
+            android:layout_row="1"
+            android:layout_gravity="fill"
+            app:srcCompat="@android:drawable/ic_menu_help"
+            android:contentDescription="@string/result_image_text" />
+
+        <ImageView
+            android:id="@+id/givenImage"
+            android:layout_width="170dp"
+            android:layout_height="330dp"
+            android:layout_gravity="fill"
+            android:layout_column="0"
+            android:layout_row="1"
+            app:srcCompat="@android:drawable/ic_menu_gallery"
+            android:contentDescription="@string/your_image_text" />
+
+    </GridLayout>
+</android.support.constraint.ConstraintLayout>

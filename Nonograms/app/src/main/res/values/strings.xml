@@ -1,0 +1,10 @@
+<resources>
+    <string name="app_name">Nonograms</string>
+    <string name="greeting_text">Welcome to Nonograms!</string>
+    <string name="about">About</string>
+    <string name="play">Play</string>
+    <string name="result_image_text">Result image:</string>
+    <string name="your_image_text">Your image:</string>
+    <string name="make_puzzle_text">Make puzzle</string>
+    <string name="upload_picture_text">upload picture</string>
+</resources>
