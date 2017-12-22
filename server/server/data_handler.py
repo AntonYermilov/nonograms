@@ -1,11 +1,17 @@
+import os
+
 from json import loads, dumps, JSONDecodeError
 from struct import pack
+
 from database_manager import DatabaseManager
+from logger import Logger
+from nonogram_creator import Nonogram
 
 class DataHandler:
     
     def __init__(self):
-        with open("config/database.config") as config:
+        path = os.path.join(os.path.abspath(""), "config", "database.config")
+        with open(path) as config:
             user = config.readline().strip()
             pwd = config.readline().strip()
         self.database = DatabaseManager(user, pwd, "nonogramDB")
@@ -13,13 +19,16 @@ class DataHandler:
     def process(self, data):
         try:
             query = loads(data, encoding="UTF-8")
+            Logger.writeInfo("Query type: {}".format(query["type"]))
             if query["type"] == "loadNonogram":
                 return self.createResponse(self.database.loadNonogram(query["data"]))
             if query["type"] == "getNonogramPreviewInfo":
                 return self.createResponse(self.database.getNonogramPreviewInfo(query["data"]))
             if query["type"] == "getNonogramById":
                 return self.createResponse(self.database.getNonogramById(query["data"]))
-            return self.createResponse({"response": "fail", "desc": "Method '%s' not implemented yet" % query["type"]})
+            if query["type"] == "solveNonogram":
+                return self.createResponse(Nonogram.solve(query["data"]))
+            return self.createResponse({"response": "fail", "desc": "Method '{}' not implemented yet".format(query["type"])})
     
         except (JSONDecodeError, KeyError) as e:
             return self.createResponse({"response": "fail", "desc": e.msg})
