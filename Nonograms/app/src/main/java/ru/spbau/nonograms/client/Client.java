@@ -1,6 +1,7 @@
 package ru.spbau.nonograms.client;
 
-import android.util.Log;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
@@ -24,7 +25,7 @@ class Client {
      * @param data data to be sent
      * @return response from server
      */
-    public static String send(String data) {
+    static String send(String data) throws IOException {
         try {
             Socket socket = new Socket(host, port);
             sendData(socket, data);
@@ -32,21 +33,26 @@ class Client {
             socket.close();
             return response;
         } catch (IOException err) {
-            err.printStackTrace();
-            Log.e("Client::send",  err.getMessage(), err);
-            return null;
+            Logger.getGlobal().logp(Level.WARNING, "Client", "send", err.getMessage());
+            throw err;
         }
     }
 
     private static void sendData(Socket socket, String data) throws IOException {
+        Logger.getGlobal().logp(Level.INFO, "Client", "sendData",
+                "Sending data to server...");
         OutputStream out = socket.getOutputStream();
         out.write(ByteBuffer.allocate(4).order(ByteOrder.LITTLE_ENDIAN)
                 .putInt(data.length()).array());
         out.write(data.getBytes(StandardCharsets.UTF_8));
-        Log.i("Client::sendData", "Data was successfully sent to server");
+        Logger.getGlobal().logp(Level.INFO, "Client", "sendData",
+                "Data was successfully sent to server");
     }
 
     private static String receiveResponse(Socket socket) throws IOException {
+        Logger.getGlobal().logp(Level.INFO, "Client", "receiveResponse",
+                "Receiving response from server...");
+
         InputStream in = socket.getInputStream();
 
         int bytesRead = in.read(buffer, 0, 4);
@@ -62,10 +68,10 @@ class Client {
         }
 
         if (length != 0) {
-            Log.e("Client::receiveResponse", "Could not read all data");
-            return null;
+            throw new IOException("Could not read all data");
         }
-        Log.i("Client::receiveResponse", "Response was successfully received from server");
+        Logger.getGlobal().logp(Level.INFO, "Client", "receiveResponse",
+                "Response was successfully received from server");
 
         return new String(response.toByteArray(), "UTF-8");
     }

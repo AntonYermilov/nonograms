@@ -1,13 +1,19 @@
 package ru.spbau.nonograms.client;
 
-import android.util.Log;
+import java.io.IOException;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
+import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 
 import ru.spbau.nonograms.logic.NonogramImage;
 
+/**
+ * Implements interaction with server.
+ */
 public class ClientManager {
 
     /**
@@ -24,20 +30,9 @@ public class ClientManager {
         json.getAsJsonObject("data").addProperty("height", nonogram.getHeight());
         json.getAsJsonObject("data").addProperty("width", nonogram.getWidth());
         json.getAsJsonObject("data").add("data", gson.toJsonTree(nonogram));
-        System.out.println(json.toString());
 
-        String response = Client.send(json.toString());
-        if (response == null) {
-            return false;
-        }
-
-        json = gson.fromJson(response, JsonObject.class);
-        if (json.get("response").toString().equals("fail")) {
-            Log.e("Client::loadNonogram", json.get("desc").toString());
-            return false;
-        }
-        Log.i("Client::loadNonogram", "nonogram was successfully loaded to server");
-        return true;
+        String response = sendToServer("loadNonogram", json.toString());
+        return response != null && processResponse("loadNonogram", response) != null;
     }
 
     /**
@@ -49,21 +44,58 @@ public class ClientManager {
         JsonObject json = createJsonObject("getNonogramById");
         json.getAsJsonObject("data").addProperty("id", id);
 
-        String response = Client.send(json.toString());
-        System.out.println(response);
-        if (response == null) {
-            return null;
+        String response = sendToServer("getNonogramById", json.toString());
+        if (response != null) {
+            JsonElement data = processResponse("getNonogramById", response);
+            Gson gson = new GsonBuilder().create();
+            return data == null ? null : gson.fromJson(data.toString(), NonogramImage.class);
         }
+        return null;
+    }
 
+    /**
+     * Checks if nonogram is solvable or not.
+     * @param nonogram specified nonogram
+     * @return {@code true} if nonogram is solvable; {@code false} otherwise
+     */
+    public static boolean solveNonogram(NonogramImage nonogram) {
         Gson gson = new GsonBuilder().create();
-        json = gson.fromJson(response, JsonObject.class);
-        if (json.get("response").toString().equals("fail")) {
-            Log.e("Client::getNonogramById", json.get("desc").toString());
+        JsonObject json = createJsonObject("solveNonogram");
+        json.add("data", gson.toJsonTree(nonogram));
+
+        String response = sendToServer("solveNonogram", json.toString());
+        if (response != null) {
+            JsonElement data = processResponse("solveNonogram", response);
+            return data != null && data.getAsBoolean();
+        }
+        return false;
+    }
+
+    private static String sendToServer(String fromMethod, String data) {
+        Logger.getGlobal().logp(Level.INFO, "ClientManager", fromMethod, "Processing...");
+        try {
+            return Client.send(data);
+        } catch (IOException err) {
+            Logger.getGlobal().logp(Level.WARNING, "ClientManager", fromMethod, "Failed");
             return null;
         }
-        NonogramImage nonogram = gson.fromJson(json.get("data").getAsString(), NonogramImage.class);
-        Log.i("Client::getNonogramById", "nonogram was successfully received from server");
-        return nonogram;
+    }
+
+    /**
+     * Transforms response to json object.
+     * @param fromMethod method this function was executed from
+     * @param response response from server
+     * @return response as json object or {@code null} if error occurred
+     */
+    private static JsonElement processResponse(String fromMethod, String response) {
+        Gson gson = new GsonBuilder().create();
+        JsonObject json = gson.fromJson(response, JsonObject.class);
+        if (json.get("response").toString().equals("fail")) {
+            Logger.getGlobal().logp(Level.WARNING, "ClientManager", fromMethod,
+                    json.get("desc").toString());
+            return null;
+        }
+        return json.get("data");
     }
 
     /**
