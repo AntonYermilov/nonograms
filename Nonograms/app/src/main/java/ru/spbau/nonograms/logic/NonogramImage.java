@@ -170,11 +170,6 @@ public class NonogramImage implements Serializable {
         return colorRGB[colorId];
     }
 
-    public String toJSON() {
-        Gson gson = new GsonBuilder().create();
-        return gson.toJson(this);
-    }
-
     /**
      * Stores information about each block of sequential cells of same color.
      */

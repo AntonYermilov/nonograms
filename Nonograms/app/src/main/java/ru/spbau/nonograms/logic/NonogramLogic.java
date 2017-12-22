@@ -86,7 +86,6 @@ public class NonogramLogic {
     public static void main(String[] args) {
         NonogramImage image = new NonogramImage(new int[][]{{0, 1, 0, 1, 0},
                 {1, 0, 1, 0, 1}, {1, 0, 0, 0, 1}, {0, 1, 0, 1, 0}, {0, 0, 1, 0, 0}}, 0);
-        System.err.println(image.toJSON());
 
         CurrentCrosswordState.ColoredValue[] black = new CurrentCrosswordState.ColoredValue[]{
                 new CurrentCrosswordState.ColoredValue(1, Color.BLACK),
