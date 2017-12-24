@@ -4,7 +4,6 @@ import android.graphics.Color;
 
 import java.io.Serializable;
 import java.util.Arrays;
-import java.util.TreeSet;
 
 /**
  * Stores current state of the crossword.

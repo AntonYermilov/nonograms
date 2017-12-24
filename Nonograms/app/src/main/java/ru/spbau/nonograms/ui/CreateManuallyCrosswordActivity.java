@@ -1,13 +1,14 @@
 package ru.spbau.nonograms.ui;
 
+import android.content.DialogInterface;
+import android.content.Intent;
 import android.graphics.Canvas;
 import android.graphics.Color;
-import android.graphics.Point;
-import android.graphics.drawable.ColorDrawable;
 import android.support.v4.view.GestureDetectorCompat;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.text.InputType;
 import android.util.Log;
 import android.view.Gravity;
 import android.view.MotionEvent;
@@ -16,6 +17,7 @@ import android.view.SurfaceHolder;
 import android.view.SurfaceView;
 import android.view.View;
 import android.widget.Button;
+import android.widget.EditText;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 
@@ -27,13 +29,13 @@ import ru.spbau.nonograms.local_database.CurrentCrosswordState;
 import ru.spbau.nonograms.ui.draw.CrosswordCanvas;
 import ru.spbau.nonograms.ui.draw.CrosswordDrawer;
 
-public class CrosswordActivity extends AppCompatActivity implements SurfaceHolder.Callback,
+public class CreateManuallyCrosswordActivity extends AppCompatActivity implements SurfaceHolder.Callback,
         View.OnTouchListener {
 
     private SurfaceHolder surfaceHolder;
 
     private CurrentCrosswordState current;
-    private String filename;
+//    private String filename;
     private int lastColor;
     private GestureDetectorCompat generalDetector;
     private ScaleGestureDetector scaleDetector;
@@ -43,18 +45,19 @@ public class CrosswordActivity extends AppCompatActivity implements SurfaceHolde
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_crossword);
+        setContentView(R.layout.activity_create_manually_crossword);
 
-        filename = getIntent().getStringExtra("Data");
-        try {
-            current = Controller.getLocalCrosswordByFilename(filename);
-        } catch (IOException e) {
-            e.printStackTrace();
-        } catch (ClassNotFoundException e) {
-            e.printStackTrace();
-        }
+        int width = getIntent().getIntExtra("width", 0);
+        int height = getIntent().getIntExtra("height", 0);
 
-        final SurfaceView surface = (SurfaceView) findViewById(R.id.surfaceView);
+
+        CurrentCrosswordState.ColoredValue[][] columns = new CurrentCrosswordState.ColoredValue[width][0];
+        CurrentCrosswordState.ColoredValue[][] rows = new CurrentCrosswordState.ColoredValue[height][0];
+
+
+        current = new CurrentCrosswordState(rows, columns, new int[]{}, null);
+
+        final SurfaceView surface = (SurfaceView) findViewById(R.id.surfaceViewCreate);
         generalDetector = new GestureDetectorCompat(this, new GestureDetector());
         scaleDetector = new ScaleGestureDetector(this, new GestureDetector());
         surfaceHolder = surface.getHolder();
@@ -63,60 +66,39 @@ public class CrosswordActivity extends AppCompatActivity implements SurfaceHolde
 
         CrosswordDrawer.staticInit();
 
-        Button checkButton = (Button) findViewById(R.id.checkButton);
-        checkButton.setOnClickListener(new View.OnClickListener() {
+        Button saveButton = (Button) findViewById(R.id.saveButton);
+        saveButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                boolean checkResult = Controller.checkCorrectness(current);
-                TextView messageResult = new TextView(CrosswordActivity.this);
-                messageResult.setGravity(Gravity.CENTER);
-                messageResult.setTextSize(20);
-                if (checkResult) {
-                    messageResult.setText("WOW! You solved it right!");
-                } else {
-                    messageResult.setText("There are some mistakes, try to solve it again. =(");
-                }
-                AlertDialog info = new AlertDialog.Builder(CrosswordActivity.this).create();
-                info.setView(messageResult);
-                info.show();
+                final EditText inputName = new EditText(CreateManuallyCrosswordActivity.this);
+                final AlertDialog dialog = new AlertDialog.Builder(CreateManuallyCrosswordActivity.this)
+                        .setTitle("Save your crossword")
+                        .setMessage("Type in your crosswords' name:")
+                        .setView(inputName)
+                        .setPositiveButton("Save", new DialogInterface.OnClickListener() {
+                            @Override
+                            public void onClick(DialogInterface dialogInterface, int i) {
+                                try {
+                                    Controller.addCrosswordLocally(current, inputName.getText().toString());
+                                } catch (IOException e) {
+                                    e.printStackTrace();
+                                }
+                            }
+                        })
+                        .setNegativeButton("Cancel", null)
+                        .create();
+                dialog.show();
             }
         });
 
-        final int[] colors = current.getColors();
         lastColor = Color.BLACK;
-        if (colors.length > 1) {
-            LinearLayout colorField = (LinearLayout) findViewById(R.id.ColorField);
-            Button[] colorButtons = new Button[colors.length];
-            lastColor = colors[0];
-            Point size = new Point();
-            getWindowManager().getDefaultDisplay().getSize(size);
-            int width = size.x / 10 * 7;
-            for (int i = 0; i < colors.length; i++) {
-                colorButtons[i] = new Button(this);
-                colorButtons[i].setBackgroundColor(colors[i]);
-                colorButtons[i].setMinimumWidth(0);
-                colorButtons[i].setWidth(width / (colors.length));
-                colorButtons[i].setOnClickListener(new View.OnClickListener() {
-                    @Override
-                    public void onClick(View view) {
-                        lastColor = ((ColorDrawable)(((Button) view).getBackground())).getColor();
-                    }
-                });
-                Log.i("Crossword activity: ", colorButtons[i].getWidth() + " " + width);
-                colorField.addView(colorButtons[i]);
-            }
-        }
+
     }
 
     @Override
     protected void onPause() {
         super.onPause();
 
-        try {
-            Controller.updateLocalyByFilename(filename, current);
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
     }
 
     @Override
@@ -154,11 +136,11 @@ public class CrosswordActivity extends AppCompatActivity implements SurfaceHolde
     private class GestureDetector extends android.view.GestureDetector.SimpleOnGestureListener
             implements ScaleGestureDetector.OnScaleGestureListener {
 
+
         private boolean scaling = false;
 
         @Override
         public boolean onScale(ScaleGestureDetector detector) {
-            Log.d("CrosswordActivity: ", "Scaling...");
             scaleFactor *= detector.getScaleFactor();
             scaleFactor = Math.round(scaleFactor * 100) / 100.0; // jitter
             scaleFactor = Math.max(0.1, Math.min(2, scaleFactor));

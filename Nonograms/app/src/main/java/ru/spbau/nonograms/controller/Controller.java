@@ -7,8 +7,11 @@ import android.graphics.drawable.BitmapDrawable;
 import android.widget.ImageView;
 
 import java.io.IOException;
+import java.sql.Array;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Random;
 import java.util.TreeSet;
 
@@ -62,6 +65,53 @@ public class Controller {
 
     public static void updateLocalyByFilename(String filename, CurrentCrosswordState state) throws IOException {
         database.updateByFilename(filename, state);
+    }
+
+    public static void addCrosswordLocally(CurrentCrosswordState crossword, String name) throws IOException {
+        NonogramImage ni = new NonogramImage(getClearFieldFromCrosswordState(crossword), Color.WHITE);
+        database.addCrossword(transferNonogramImageToCrosswordState(ni), name);
+    }
+
+    private static CurrentCrosswordState transferNonogramImageToCrosswordState(NonogramImage ni) {
+        int[] usedColors = Arrays.copyOfRange(ni.getUsedColors(), 1, ni.getUsedColors().length);
+        int width = ni.getWidth();
+        int height = ni.getHeight();
+        CurrentCrosswordState.ColoredValue[][] columns = new CurrentCrosswordState.ColoredValue[width][];
+        for (int i = 0; i < width; i++) {
+            List<NonogramImage.Segment> col = ni.getColumn(i);
+            columns[i] = new CurrentCrosswordState.ColoredValue[col.size()];
+            for (int j = 0; j < columns[i].length; j++) {
+                columns[i][j] = new CurrentCrosswordState.ColoredValue(col.get(j).getSize(),
+                        ni.getRGBColor(col.get(j).getColorType()));
+            }
+
+        }
+        CurrentCrosswordState.ColoredValue[][] rows = new CurrentCrosswordState.ColoredValue[height][];
+        for (int i = 0; i < height; i++) {
+            List<NonogramImage.Segment> row = ni.getRow(i);
+            rows[i] = new CurrentCrosswordState.ColoredValue[row.size()];
+            for (int j = 0; j < rows[i].length; j++) {
+                rows[i][j] = new CurrentCrosswordState.ColoredValue(row.get(j).getSize(),
+                        ni.getRGBColor(row.get(j).getColorType()));
+            }
+
+        }
+        return new CurrentCrosswordState(rows, columns, usedColors, null);
+    }
+
+    private static int[][] getClearFieldFromCrosswordState(CurrentCrosswordState state) {
+        int[][] result = new int[state.getHeight()][state.getWidth()];
+        for (int i = 0; i < state.getHeight(); i++) {
+            for (int j = 0; j < state.getWidth(); j++) {
+                CurrentCrosswordState.ColoredValue val = state.getField(j, i);
+                if (val.getValue() == CurrentCrosswordState.FILLED_CELL) {
+                    result[i][j] = val.getColor();
+                } else {
+                    result[i][j] = Color.WHITE;
+                }
+            }
+        }
+        return result;
     }
 
     private static Bitmap getBitmap(ImageView givenImage) {
