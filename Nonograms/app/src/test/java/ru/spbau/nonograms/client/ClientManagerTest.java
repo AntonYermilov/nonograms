@@ -1,35 +1,36 @@
 package ru.spbau.nonograms.client;
 
 import org.junit.Test;
-import static org.junit.Assert.*;
 
-import ru.spbau.nonograms.logic.NonogramImage;
+import ru.spbau.nonograms.model.Image;
+
+import static org.junit.Assert.assertEquals;
 
 public class ClientManagerTest {
-    private static NonogramImage heart = new NonogramImage(new int[][]{
-            {0, 1, 0, 1, 0},
-            {1, 0, 1, 0, 1},
-            {1, 0, 0, 0, 0},
-            {0, 1, 0, 1, 0},
-            {0, 0, 1, 0, 0}
-    }, 0);
+    private static Image heart = new Image(new int[][]{
+            {48, 49, 48, 49, 48},
+            {49, 48, 49, 48, 49},
+            {49, 48, 48, 48, 49},
+            {48, 49, 48, 49, 48},
+            {48, 48, 49, 48, 48}
+    }, 1, 48);
 
-    private static NonogramImage house = new NonogramImage(new int[][]{
+    private static Image house = new Image(new int[][]{
             {0, 0, 1, 0, 0},
             {0, 1, 0, 1, 0},
             {1, 0, 0, 0, 1},
             {1, 0, 1, 0, 1},
             {1, 0, 1, 0, 1}
-    }, 0);
+    }, 1, 0);
 
-    private static NonogramImage unsolvableImage = new NonogramImage(new int [][]{
+    private static Image unsolvableImage = new Image(new int [][]{
             {1, 0, 1, 0},
             {0, 1, 0, 1},
             {1, 0, 1, 0},
             {0, 1, 0, 1}
-    }, 0);
+    }, 1, 0);
 
-    private static NonogramImage teacup = new NonogramImage(new int[][]{
+    private static Image teacup = new Image(new int[][]{
             {0, 0, 1, 0, 1, 0, 1, 0, 0, 0},
             {0, 0, 1, 0, 1, 0, 1, 0, 0, 0},
             {0, 0, 0, 0, 0, 0, 0, 0, 0, 0},
@@ -40,7 +41,7 @@ public class ClientManagerTest {
             {0, 1, 1, 1, 1, 1, 1, 1, 0, 0},
             {1, 0, 1, 1, 1, 1, 1, 0, 0, 1},
             {0, 1, 1, 1, 1, 1, 1, 1, 1, 0}
-    }, 0);
+    }, 1, 0);
 
     @Test
     public void testSolveNonogramHeart() {

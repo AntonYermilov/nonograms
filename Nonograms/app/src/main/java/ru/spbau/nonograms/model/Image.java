@@ -2,15 +2,17 @@ package ru.spbau.nonograms.model;
 
 import android.graphics.Bitmap;
 
-import com.google.gson.Gson;
-import com.google.gson.GsonBuilder;
 import com.google.gson.JsonObject;
 
 import java.nio.ByteBuffer;
-import java.nio.charset.Charset;
+import java.nio.ByteOrder;
 import java.nio.charset.StandardCharsets;
+import java.util.ArrayList;
+import java.util.HashSet;
 
 import ru.spbau.nonograms.local_database.CurrentCrosswordState;
+
+import static ru.spbau.nonograms.local_database.CurrentCrosswordState.ColoredValue;
 
 /**
  * Stores image as array of pixels.
@@ -67,7 +69,8 @@ public class Image {
         this.width = state.getWidth();
         this.colors = state.getColors().length;
 
-        this.backgroundColor = -1; //TODO backgroundColor
+        //TODO backgroundColor
+        //this.backgroundColor = state.getBackgroundColor();
 
         this.pixels = new int[this.height * this.width];
         for (int y = 0; y < this.height; y++) {
@@ -88,8 +91,60 @@ public class Image {
         backgroundColor = jsonObject.get("backgroundColor").getAsInt();
 
         String buffer = jsonObject.get("pixels").getAsString();
-        ByteBuffer byteBuffer = ByteBuffer.wrap(buffer.getBytes(StandardCharsets.UTF_8));
+        ByteBuffer byteBuffer = ByteBuffer.wrap(buffer.getBytes(StandardCharsets.UTF_8))
+                .order(ByteOrder.LITTLE_ENDIAN);
         pixels = byteBuffer.asIntBuffer().array();
+    }
+
+    /**
+     * Transforms image to bitmap with ARGB_8888 configuration type.
+     * @return bitmap created using the stored array of pixels
+     */
+    public Bitmap toBitmap() {
+        return Bitmap.createBitmap(pixels, width, height, Bitmap.Config.ARGB_8888);
+    }
+
+    public CurrentCrosswordState toCurrentCrosswordState() {
+        int[] imageColors = new int[colors];
+        HashSet<Integer> used = new HashSet<>();
+        for (int color : pixels) {
+            if (color != backgroundColor && !used.contains(color)) {
+                imageColors[used.size()] = color;
+                used.add(color);
+            }
+        }
+
+        ColoredValue[][] rows = new ColoredValue[height][];
+        for (int i = 0; i < height; i++) {
+            ArrayList<ColoredValue> blocks = new ArrayList<>();
+            for (int l = 0, r = 0; r < width; l = r) {
+                while (r < width && pixels[i * width + l] == pixels[i * width + r]) {
+                    r++;
+                }
+                if (pixels[i * width + l] != backgroundColor) {
+                    blocks.add(new ColoredValue(r - l, pixels[i * width + l]));
+                }
+            }
+            rows[i] = (ColoredValue[]) blocks.toArray();
+        }
+
+        ColoredValue[][] columns = new ColoredValue[width][];
+        for (int i = 0; i < width; i++) {
+            ArrayList<ColoredValue> blocks = new ArrayList<>();
+            for (int l = 0, r = 0; r < height; l = r) {
+                while (r < height && pixels[l * width + i] == pixels[r * width + i]) {
+                    r++;
+                }
+                if (pixels[l * width + i] != backgroundColor) {
+                    blocks.add(new ColoredValue(r - l, pixels[l * width + i]));
+                }
+            }
+            columns[i] = (ColoredValue[]) blocks.toArray();
+        }
+
+        //TODO add backgroundColor
+        //return new CurrentCrosswordState(rows, columns, imageColors, backgroundColor, null);
+        return new CurrentCrosswordState(rows, columns, imageColors, null);
     }
 
     /**
@@ -104,19 +159,12 @@ public class Image {
         jsonObject.addProperty("colors", colors);
         jsonObject.addProperty("backgroundColor", backgroundColor);
 
-        ByteBuffer byteBuffer = ByteBuffer.allocate(pixels.length * 4);
+        ByteBuffer byteBuffer = ByteBuffer.allocate(pixels.length * 4)
+                .order(ByteOrder.LITTLE_ENDIAN);
         byteBuffer.asIntBuffer().put(pixels);
         jsonObject.addProperty("pixels", new String(byteBuffer.array(), StandardCharsets.UTF_8));
 
         return jsonObject;
-    }
-
-    /**
-     * Transforms image to bitmap with ARGB_8888 configuration type.
-     * @return bitmap created using the stored array of pixels
-     */
-    public Bitmap toBitmap() {
-        return Bitmap.createBitmap(pixels, width, height, Bitmap.Config.ARGB_8888);
     }
 
 }
