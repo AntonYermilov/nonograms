@@ -1,4 +1,5 @@
 #include <algorithm>
+#include <iostream>
 
 #include <image.h>
 #include <json.hpp>
@@ -10,16 +11,14 @@ using std::string;
 Image::Image(const json &image) {
     height = image["height"];
     width = image["width"];
-    colors = image["colors"];
+    colors = image["colors"].get<int>() + 1;
     backgroundColor = image["backgroundColor"];
 
     pixels = vector<vector<int> >(height, vector<int>(width));
-
-    string buffer = image["pixels"].get<string>();
-    const int* data_ptr = reinterpret_cast<const int*>(buffer.c_str());
+    auto &data = image["pixels"];
     for (int i = 0; i < height; i++) {
         for (int j = 0; j < width; j++) {
-            pixels[i][j] = data_ptr[i * width + j];
+            pixels[i][j] = data[i * width + j];
         }
     }
 }
@@ -56,17 +55,15 @@ json Image::toJson() const {
     json image;
     image["height"] = height;
     image["width"] = width;
-    image["colors"] = colors;
+    image["colors"] = colors - 1;
     image["backgroundColor"] = backgroundColor;
     
-    string buffer(width * height * 4, 0x00);
+    vector<int> data(height * width);
     for (int i = 0; i < height; i++) {
         for (int j = 0; j < width; j++) {
-            std::copy(reinterpret_cast<const char*>(&pixels[i][j]), 
-                      reinterpret_cast<const char*>(&pixels[i][j]) + 4,
-                      &buffer[(i * width + j) * 4]);
+            data[i * width + j] = pixels[i][j];
         }
     }
-    image["pixels"] = buffer;
+    image["pixels"] = data;
     return image;
 }

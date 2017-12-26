@@ -8,7 +8,7 @@ using std::unordered_map;
 NonogramConfig::NonogramConfig(const Image &image) {
     height = image.getHeight();
     width = image.getWidth();
-    colors = image.getColors();
+    colors = image.getColors() - 1;
 
     colorId = unordered_map<int, int>(32);
     colorRGB = vector<int>(colors + 1);
@@ -39,7 +39,7 @@ NonogramConfig::NonogramConfig(const Image &image) {
 
     columns = vector<vector<Segment> >(width);
     for (int i = 0; i < width; i++) {
-        for (int l = 0, r = 0; r < width; l = r) {
+        for (int l = 0, r = 0; r < height; l = r) {
             while (r < height && image[l][i] == image[r][i]) {
                 r++;
             }

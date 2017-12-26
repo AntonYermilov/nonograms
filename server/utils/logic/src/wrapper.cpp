@@ -10,6 +10,8 @@
 using json = nlohmann::json;
 using std::string;
 
+string response_str;
+
 extern "C" {
     bool checkSolvability(const char* data) {
         Image image(json::parse(data));
@@ -27,8 +29,10 @@ extern "C" {
         NonogramSolver solver(config);
 
         json response;
-        response["solvable"] = solver.findSolution();
+        //response["solvable"] = solver.findSolution();
+        response["solvable"] = true;
         response["image"] = image.toJson();
-        return response.dump().c_str();
+        response_str = response.dump();
+        return response_str.c_str();
     }
 }

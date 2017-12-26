@@ -7,9 +7,15 @@ from struct import unpack
 
 from data_handler import DataHandler
 from logger import Logger
+from nonogram import Nonogram
 
+HOST = ""
+PORT = 5222
+
+# Provides interaction with client
 class ServerProtocol:
     
+    # Creates server and binds it to the specified host and port
     def __init__(self, host, port):
         self.host = host
         self.port = port
@@ -19,6 +25,7 @@ class ServerProtocol:
         self.socket.listen(10)
         self.handler = DataHandler()
 
+    # Starts listening queries from clients
     def run_server(self):
         try:
             while True:
@@ -29,7 +36,7 @@ class ServerProtocol:
                     response = self.handler.process(data)
                     conn.sendall(response)
                 except Exception as e:
-                    Logger.writeError(e.msg)
+                    Logger.writeError(str(e))
                 finally:
                     conn.shutdown(SHUT_RDWR)
                     conn.close()
@@ -38,8 +45,10 @@ class ServerProtocol:
             self.socket.close()
             self.socket = None
 
+    # Receives all data from client
     def receive_all(self, conn):
         (length,) = unpack('<i', conn.recv(4))
+        Logger.writeInfo(length)
         data = b''
         while len(data) < length:
             to_read = min(self.buffer_size, length - len(data))
@@ -48,6 +57,7 @@ class ServerProtocol:
 
 if __name__ == "__main__":
     Logger.init()
+    Nonogram.init()
 
-    server = ServerProtocol("", 5222)
+    server = ServerProtocol(HOST, PORT)
     server.run_server()

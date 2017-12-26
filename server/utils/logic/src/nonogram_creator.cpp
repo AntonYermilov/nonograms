@@ -1,6 +1,7 @@
 #include <vector>
 #include <cmath>
 #include <algorithm>
+#include <iostream>
 
 #include <nonogram_creator.h>
 #include <image.h>
@@ -44,13 +45,15 @@ vector<int> NonogramCreator::selectMainColors(Image &image) {
     int average = image.getHeight() * image.getWidth() / image.getColors();
     vector<vector<int> > dp(image.getColors() + 1, vector<int>(MAX_INTENSITY + 1, INF));
     vector<vector<int> > parent(image.getColors() + 1, vector<int>(MAX_INTENSITY + 1));
-    int range = MAX_INTENSITY * 1.5 / image.getColors();
+
+    int max_range = MAX_INTENSITY * 1.5 / image.getColors();
+    int min_range = 0; //MAX_INTENSITY * 0.5 / image.getColors();
 
     dp[0][0] = 0;
     for (int color = 1; color <= image.getColors(); color++) {
         for (int i = 1; i <= MAX_INTENSITY; i++) {
             int sum = 0;
-            for (int j = i; j > 0 && i - j < range; j--) {
+            for (int j = i - min_range; j > 0 && i - j < max_range; j--) {
                 sum += countAll[j - 1];
                 if (dp[color][i] > dp[color - 1][j - 1] + (sum - average) * (sum - average)) {
                     dp[color][i] = dp[color - 1][j - 1] + (sum - average) * (sum - average);
@@ -70,17 +73,21 @@ vector<int> NonogramCreator::selectMainColors(Image &image) {
     vector<int> type(MAX_INTENSITY);
     vector<int> optimalColors(image.getColors());
     for (int color = 0; color < image.getColors(); color++) {
-        int red = 0, green = 0, blue = 0, weight = 0;
-        for (int i = left_bound[color]; i < right_bound[color]; i++) {
-            weight += countAll[i];
-            red += sumRed[i];
-            green += sumGreen[i];
-            blue += sumBlue[i];
+        if (image.getColors() == 2) {
+            optimalColors[color] = color == 0 ? Color::argb(255, 0, 0, 0) : Color::argb(255, 255, 255, 255);
+        } else {
+            int red = 0, green = 0, blue = 0, weight = 1;
+            for (int i = left_bound[color]; i < right_bound[color]; i++) {
+                weight += countAll[i];
+                red += sumRed[i];
+                green += sumGreen[i];
+                blue += sumBlue[i];
+            }
+            red = std::min(255, red / weight);
+            green = std::min(255, green / weight);
+            blue = std::min(255, blue / weight);
+            optimalColors[color] = Color::argb(255, red, green, blue);
         }
-        red = std::min(255, red / weight);
-        green = std::min(255, green / weight);
-        blue = std::min(255, blue / weight);
-        optimalColors[color] = Color::argb(255, red, green, blue);
         for (int i = left_bound[color]; i < right_bound[color]; i++) {
             type[i] = color;
         }
