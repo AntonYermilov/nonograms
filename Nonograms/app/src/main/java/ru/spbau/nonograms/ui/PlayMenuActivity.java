@@ -36,11 +36,11 @@ public class PlayMenuActivity extends AppCompatActivity {
             }
         });
 
-        Button createCrosswordButton = (Button) findViewById(R.id.createCrosswordButton);
+        Button createCrosswordButton = (Button) findViewById(R.id.yourCrosswordsButton);
         createCrosswordButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                Intent intent = new Intent(PlayMenuActivity.this, CreateCrosswordActivity.class);
+                Intent intent = new Intent(PlayMenuActivity.this, YourCrosswordsMenuActivity.class);
                 startActivity(intent);
             }
         });

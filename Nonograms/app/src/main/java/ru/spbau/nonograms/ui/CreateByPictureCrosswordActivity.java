@@ -1,9 +1,7 @@
 package ru.spbau.nonograms.ui;
 
 import android.content.Intent;
-import android.database.Cursor;
 import android.graphics.Bitmap;
-import android.graphics.BitmapFactory;
 import android.net.Uri;
 import android.provider.MediaStore;
 import android.support.v7.app.AppCompatActivity;
@@ -15,9 +13,8 @@ import android.widget.Toast;
 
 import ru.spbau.nonograms.R;
 import ru.spbau.nonograms.controller.Controller;
-import ru.spbau.nonograms.logic.NonogramImage;
 
-public class CreateCrosswordActivity extends AppCompatActivity {
+public class CreateByPictureCrosswordActivity extends AppCompatActivity {
 
     private static final int RESULT_LOAD_IMAGE = 1;
     private ImageView givenImage;
@@ -47,13 +44,13 @@ public class CreateCrosswordActivity extends AppCompatActivity {
                 try {
                     Bitmap result = Controller.makeCrosswordViewFromImage(givenImage);
                     if (Controller.getMadeCrosswordFromLastImage() == null) {
-                        Toast nonSuccess = Toast.makeText(CreateCrosswordActivity.this,
+                        Toast nonSuccess = Toast.makeText(CreateByPictureCrosswordActivity.this,
                                 "Sorry, we couldn't build puzzle.", Toast.LENGTH_LONG);
                         nonSuccess.show();
                     }
                     resultImage.setImageBitmap(result);
                 } catch (OutOfMemoryError e) {
-                    Toast nonSuccess = Toast.makeText(CreateCrosswordActivity.this,
+                    Toast nonSuccess = Toast.makeText(CreateByPictureCrosswordActivity.this,
                             "Sorry, the picture was too big.", Toast.LENGTH_LONG);
                     nonSuccess.show();
                     System.gc();

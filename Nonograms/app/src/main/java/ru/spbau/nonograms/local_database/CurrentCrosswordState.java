@@ -4,7 +4,6 @@ import android.graphics.Color;
 
 import java.io.Serializable;
 import java.util.Arrays;
-import java.util.TreeSet;
 
 /**
  * Stores current state of the crossword.
@@ -14,6 +13,7 @@ public class CurrentCrosswordState implements Serializable {
 
     public static final int FILLED_CELL = 2;
 
+    private int backgroundColor;
     private int height;
     private int width;
 
@@ -33,7 +33,9 @@ public class CurrentCrosswordState implements Serializable {
      * @param colors all columns used in crossword
      * @param lastField last state field of the crossword. Can be {@code null}
      */
-    public CurrentCrosswordState(ColoredValue[][] rows, ColoredValue[][] columns, int colors[], ColoredValue[][] lastField) {
+    public CurrentCrosswordState(ColoredValue[][] rows, ColoredValue[][] columns, int colors[],
+                                 int backgroundColor, ColoredValue[][] lastField) {
+        this.backgroundColor = backgroundColor;
         height = rows.length;
         width = columns.length;
         this.rows = copyDoubleArray(rows);
@@ -55,6 +57,10 @@ public class CurrentCrosswordState implements Serializable {
         for (int i = 0; i < columns.length; i++) {
             columnsMax = Math.max(columnsMax, columns[i].length);
         }
+    }
+
+    public int getBackgroundColor() {
+        return backgroundColor;
     }
 
     public int[] getColors() {

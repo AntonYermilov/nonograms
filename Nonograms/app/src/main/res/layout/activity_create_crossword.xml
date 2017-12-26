@@ -4,7 +4,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context="ru.spbau.nonograms.ui.CreateCrosswordActivity">
+    tools:context="ru.spbau.nonograms.ui.CreateByPictureCrosswordActivity">
 
     <android.support.constraint.Guideline
         android:id="@+id/guideline"
