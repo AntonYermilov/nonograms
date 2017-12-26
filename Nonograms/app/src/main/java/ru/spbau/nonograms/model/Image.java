@@ -69,8 +69,7 @@ public class Image {
         this.width = state.getWidth();
         this.colors = state.getColors().length;
 
-        //TODO backgroundColor
-        //this.backgroundColor = state.getBackgroundColor();
+        this.backgroundColor = state.getBackgroundColor();
 
         this.pixels = new int[this.height * this.width];
         for (int y = 0; y < this.height; y++) {
@@ -142,9 +141,7 @@ public class Image {
             columns[i] = (ColoredValue[]) blocks.toArray();
         }
 
-        //TODO add backgroundColor
-        //return new CurrentCrosswordState(rows, columns, imageColors, backgroundColor, null);
-        return new CurrentCrosswordState(rows, columns, imageColors, null);
+        return new CurrentCrosswordState(rows, columns, imageColors, backgroundColor, null);
     }
 
     /**

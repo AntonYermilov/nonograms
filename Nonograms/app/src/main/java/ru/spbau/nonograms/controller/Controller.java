@@ -15,19 +15,17 @@ import java.util.List;
 import java.util.Random;
 import java.util.TreeSet;
 
+import ru.spbau.nonograms.client.ClientManager;
 import ru.spbau.nonograms.local_database.CrosswordDBHelper;
 import ru.spbau.nonograms.local_database.CrosswordInfo;
 import ru.spbau.nonograms.local_database.CurrentCrosswordState;
 import ru.spbau.nonograms.logic.NonogramImage;
 import ru.spbau.nonograms.logic.NonogramLogic;
+import ru.spbau.nonograms.model.Image;
 
 public class Controller {
 
     private static CrosswordDBHelper database;
-
-    public static boolean checkCorrectness() {
-        return false;
-    }
 
     //pair -- result + crossword
     //receives an image, user posted
@@ -35,8 +33,12 @@ public class Controller {
         return NonogramLogic.createNonogram(getBitmap(givenImage), 70, 70, 5);
     }
 
-    public static NonogramImage getMadeCrosswordFromLastImage() {
+    public static CurrentCrosswordState getMadeCrosswordFromLastImage() {
         return NonogramLogic.getLastNonogram();
+    }
+
+    boolean canBeSolvedOnServer(Image image) {
+        return ClientManager.solveNonogram(image);
     }
 
     public static boolean checkCorrectness(CurrentCrosswordState current) {
@@ -59,7 +61,8 @@ public class Controller {
         return database.getAllCrosswords();
     }
 
-    public static CurrentCrosswordState getLocalCrosswordByFilename(String filename) throws IOException, ClassNotFoundException {
+    public static CurrentCrosswordState getLocalCrosswordByFilename(String filename)
+            throws IOException, ClassNotFoundException {
         return database.getCrosswordByFilename(filename);
     }
 
@@ -70,6 +73,10 @@ public class Controller {
     public static void addCrosswordLocally(CurrentCrosswordState crossword, String name) throws IOException {
         NonogramImage ni = new NonogramImage(getClearFieldFromCrosswordState(crossword), Color.WHITE);
         database.addCrossword(transferNonogramImageToCrosswordState(ni), name);
+    }
+
+    public static Image createImageOnServer(Image image) {
+        return ClientManager.createNonogram(image);
     }
 
     private static CurrentCrosswordState transferNonogramImageToCrosswordState(NonogramImage ni) {

@@ -5,6 +5,7 @@ import android.graphics.Bitmap;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
+import ru.spbau.nonograms.controller.Controller;
 import ru.spbau.nonograms.local_database.CurrentCrosswordState;
 import ru.spbau.nonograms.model.Image;
 
@@ -45,7 +46,10 @@ public class NonogramLogic {
         image = ImageTransformer.decreaseSize(image, width, height, false);
 
         Logger.getGlobal().logp(Level.INFO, "NonogramLogic", "createNonogram", "Creating nonogram...");
-        Image nonogram = new Image(image, colors); //TODO send to server
+
+        Image nonogram = Controller.createImageOnServer(new Image(image, colors));
+        lastNonogram = nonogram.toCurrentCrosswordState();
+        image = nonogram.toBitmap();
 
         Logger.getGlobal().logp(Level.INFO, "NonogramImage", "createNonogram", "Increasing size...");
         return ImageTransformer.increaseSize(image,
@@ -68,19 +72,4 @@ public class NonogramLogic {
     public static boolean checkNonogram(CurrentCrosswordState state) {
         return NonogramChecker.check(state);
     }
-
-    /**
-     * Checks if nonogram can be solved.
-     * @param image specified nonogram image
-     * @return {@code true} if nonogram can be solved; {@code false} otherwise
-     */
-    private static boolean canSolve(CurrentCrosswordState image) {
-        Logger.getGlobal().logp(Level.INFO, "NonogramLogic", "canSolve",
-                "Checking nonogram for solvability...");
-        boolean result = true; //TODO send to server
-        Logger.getGlobal().logp(Level.INFO, "NonogramLogic", "canSolve",
-                "Has solution: " + result);
-        return result;
-    }
-
 }
