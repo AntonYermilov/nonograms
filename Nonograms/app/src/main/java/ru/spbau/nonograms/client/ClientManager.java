@@ -1,11 +1,14 @@
 package ru.spbau.nonograms.client;
 
+import android.os.AsyncTask;
+
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 
 import java.io.IOException;
+import java.util.concurrent.ExecutionException;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
@@ -18,6 +21,19 @@ import static ru.spbau.nonograms.local_database.CurrentCrosswordState.ColoredVal
  * Implements interaction with server.
  */
 public class ClientManager {
+
+    private static AsyncTask<String, Void, String> task = new AsyncTask<String, Void, String>() {
+        @Override
+        protected String doInBackground(String... params) {
+            try {
+                return Client.send(params[1]);
+            } catch (IOException e) {
+                Logger.getGlobal().logp(Level.WARNING, "ClientManager", params[0],
+                        "Failed:\n" + e.getMessage());
+                return null;
+            }
+        }
+    };
 
     /**
      * Loads nonogram to server.
@@ -91,12 +107,19 @@ public class ClientManager {
         return null;
     }
 
+    /**
+     * Sends data to server, return response from it.
+     * @param fromMethod method this function was called from
+     * @param data data to send
+     * @return response from server
+     */
     private static String sendToServer(String fromMethod, String data) {
         Logger.getGlobal().logp(Level.INFO, "ClientManager", fromMethod, "Processing...");
         try {
-            return Client.send(data);
-        } catch (IOException err) {
-            Logger.getGlobal().logp(Level.WARNING, "ClientManager", fromMethod, "Failed");
+            return task.execute(fromMethod, data).get();
+        } catch (InterruptedException | ExecutionException e) {
+            Logger.getGlobal().logp(Level.INFO, "ClientManager", fromMethod,
+                    "Error when executing async task occurred:\n" + e.getMessage());
             return null;
         }
     }

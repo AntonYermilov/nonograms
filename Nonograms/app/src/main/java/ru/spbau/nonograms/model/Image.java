@@ -2,6 +2,7 @@ package ru.spbau.nonograms.model;
 
 import android.graphics.Bitmap;
 
+import com.google.gson.GsonBuilder;
 import com.google.gson.JsonObject;
 
 import java.nio.ByteBuffer;
@@ -89,11 +90,7 @@ public class Image {
         width = jsonObject.get("width").getAsInt();
         colors = jsonObject.get("colors").getAsInt();
         backgroundColor = jsonObject.get("backgroundColor").getAsInt();
-
-        String buffer = jsonObject.get("pixels").getAsString();
-        ByteBuffer byteBuffer = ByteBuffer.wrap(buffer.getBytes(StandardCharsets.UTF_8))
-                .order(ByteOrder.LITTLE_ENDIAN);
-        pixels = byteBuffer.asIntBuffer().array();
+        pixels = new GsonBuilder().create().fromJson(jsonObject.get("pixels"), int[].class);
     }
 
     /**
@@ -158,11 +155,7 @@ public class Image {
         jsonObject.addProperty("width", height);
         jsonObject.addProperty("colors", colors);
         jsonObject.addProperty("backgroundColor", backgroundColor);
-
-        ByteBuffer byteBuffer = ByteBuffer.allocate(pixels.length * 4)
-                .order(ByteOrder.LITTLE_ENDIAN);
-        byteBuffer.asIntBuffer().put(pixels);
-        jsonObject.addProperty("pixels", new String(byteBuffer.array(), StandardCharsets.UTF_8));
+        jsonObject.add("pixels", new GsonBuilder().create().toJsonTree(pixels));
 
         return jsonObject;
     }
