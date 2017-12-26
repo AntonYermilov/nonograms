@@ -3,16 +3,20 @@
 
 #include <string>
 #include <vector>
+#include <unordered_map>
+
+#include <image.h>
 
 class NonogramConfig {
   public:
-
-    NonogramConfig(const std::string &jsonNonogram);
-    NonogramConfig(const std::vector<std::vector<int> > &field, int backgroundColor);
+    NonogramConfig(const Image &image);
 
     int getHeight() const;
     int getWidth() const;
     int getColors() const;
+
+    int getColorId(int color) const;
+    int getColorRGB(int id) const;
     
     class Segment {
       public:
@@ -28,7 +32,7 @@ class NonogramConfig {
     };
 
     std::vector<Segment> getRow(int row) const;
-    std::vector<Segment> getColumn(int columnt) const;
+    std::vector<Segment> getColumn(int column) const;
 
   private:
     int height;
@@ -36,6 +40,9 @@ class NonogramConfig {
     int colors;
     std::vector<std::vector<Segment> > rows;
     std::vector<std::vector<Segment> > columns;
+
+    std::vector<int> colorRGB;
+    std::unordered_map<int, int> colorId;
 
     NonogramConfig();
 };

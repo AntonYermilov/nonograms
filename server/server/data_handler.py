@@ -5,7 +5,7 @@ from struct import pack
 
 from database_manager import DatabaseManager
 from logger import Logger
-from nonogram_creator import Nonogram
+from nonogram import Nonogram
 
 class DataHandler:
     
@@ -28,6 +28,8 @@ class DataHandler:
                 return self.createResponse(self.database.getNonogramById(query["data"]))
             if query["type"] == "solveNonogram":
                 return self.createResponse(Nonogram.solve(query["data"]))
+            if query["type"] == "createNonogram":
+                return self.createResponse(Nonogram.create(query["data"]))
             return self.createResponse({"response": "fail", "desc": "Method '{}' not implemented yet".format(query["type"])})
     
         except (JSONDecodeError, KeyError) as e:

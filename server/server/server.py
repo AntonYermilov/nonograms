@@ -29,7 +29,7 @@ class ServerProtocol:
                     response = self.handler.process(data)
                     conn.sendall(response)
                 except Exception as e:
-                    Loger.writeError(e.msg)
+                    Logger.writeError(e.msg)
                 finally:
                     conn.shutdown(SHUT_RDWR)
                     conn.close()
