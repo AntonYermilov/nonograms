@@ -23,14 +23,18 @@ import ru.spbau.nonograms.logic.NonogramImage;
 import ru.spbau.nonograms.logic.NonogramLogic;
 import ru.spbau.nonograms.model.Image;
 
+/**
+ * Controller connects all parts of the program.
+ * Sometimes it does some
+ */
 public class Controller {
 
     private static CrosswordDBHelper database;
 
     //pair -- result + crossword
     //receives an image, user posted
-    public static Bitmap makeCrosswordViewFromImage(ImageView givenImage) {
-        return NonogramLogic.createNonogram(getBitmap(givenImage), 70, 70, 5);
+    public static Bitmap makeCrosswordViewFromImage(ImageView givenImage, int width, int height, int colors) {
+        return NonogramLogic.createNonogram(getBitmap(givenImage), width, height, colors);
     }
 
     public static CurrentCrosswordState getMadeCrosswordFromLastImage() {

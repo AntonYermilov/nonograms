@@ -155,7 +155,7 @@ public class Image {
         JsonObject jsonObject = new JsonObject();
 
         jsonObject.addProperty("height", height);
-        jsonObject.addProperty("width", height);
+        jsonObject.addProperty("width", width);
         jsonObject.addProperty("colors", colors);
         jsonObject.addProperty("backgroundColor", backgroundColor);
         jsonObject.add("pixels", new GsonBuilder().create().toJsonTree(pixels));
