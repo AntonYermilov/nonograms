@@ -69,7 +69,6 @@ public class Image {
         this.height = state.getHeight();
         this.width = state.getWidth();
         this.colors = state.getColors().length;
-
         this.backgroundColor = state.getBackgroundColor();
 
         this.pixels = new int[this.height * this.width];
@@ -110,6 +109,7 @@ public class Image {
             }
         }
 
+        System.err.println(width + " " + height + " " + colors + " " + backgroundColor);
         ColoredValue[][] rows = new ColoredValue[height][];
         for (int i = 0; i < height; i++) {
             ArrayList<ColoredValue> blocks = new ArrayList<>();
@@ -121,7 +121,10 @@ public class Image {
                     blocks.add(new ColoredValue(r - l, pixels[i * width + l]));
                 }
             }
-            rows[i] = (ColoredValue[]) blocks.toArray();
+            rows[i] = new ColoredValue[blocks.size()];
+            for (int j = 0; j < blocks.size(); j++) {
+                rows[i][j] = blocks.get(j);
+            }
         }
 
         ColoredValue[][] columns = new ColoredValue[width][];
@@ -135,7 +138,10 @@ public class Image {
                     blocks.add(new ColoredValue(r - l, pixels[l * width + i]));
                 }
             }
-            columns[i] = (ColoredValue[]) blocks.toArray();
+            columns[i] = new ColoredValue[blocks.size()];
+            for (int j = 0; j < blocks.size(); j++) {
+                columns[i][j] = blocks.get(j);
+            }
         }
 
         return new CurrentCrosswordState(rows, columns, imageColors, backgroundColor, null);

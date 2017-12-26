@@ -22,19 +22,6 @@ import static ru.spbau.nonograms.local_database.CurrentCrosswordState.ColoredVal
  */
 public class ClientManager {
 
-    private static AsyncTask<String, Void, String> task = new AsyncTask<String, Void, String>() {
-        @Override
-        protected String doInBackground(String... params) {
-            try {
-                return Client.send(params[1]);
-            } catch (IOException e) {
-                Logger.getGlobal().logp(Level.WARNING, "ClientManager", params[0],
-                        "Failed:\n" + e.getMessage());
-                return null;
-            }
-        }
-    };
-
     /**
      * Loads nonogram to server.
      * @param nonogram specified nonogram
@@ -116,7 +103,18 @@ public class ClientManager {
     private static String sendToServer(String fromMethod, String data) {
         Logger.getGlobal().logp(Level.INFO, "ClientManager", fromMethod, "Processing...");
         try {
-            return task.execute(fromMethod, data).get();
+            return new AsyncTask<String, Void, String>() {
+                @Override
+                protected String doInBackground(String... params) {
+                    try {
+                        return Client.send(params[1]);
+                    } catch (IOException e) {
+                        Logger.getGlobal().logp(Level.WARNING, "ClientManager", params[0],
+                                "Failed:\n" + e.getMessage());
+                        return null;
+                    }
+                }
+            }.execute(fromMethod, data).get();
         } catch (InterruptedException | ExecutionException e) {
             Logger.getGlobal().logp(Level.INFO, "ClientManager", fromMethod,
                     "Error when executing async task occurred:\n" + e.getMessage());
