@@ -79,7 +79,7 @@ public class CreateManuallyCrosswordActivity extends AppCompatActivity implement
                             @Override
                             public void onClick(DialogInterface dialogInterface, int i) {
                                 try {
-                                    Controller.addCrosswordLocally(current, inputName.getText().toString());
+                                    Controller.addCrosswordLocallyByField(current, inputName.getText().toString());
                                 } catch (IOException e) {
                                     e.printStackTrace();
                                 }

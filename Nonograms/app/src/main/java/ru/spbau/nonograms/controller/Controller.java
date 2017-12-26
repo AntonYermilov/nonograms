@@ -74,9 +74,13 @@ public class Controller {
         database.updateByFilename(filename, state);
     }
 
-    public static void addCrosswordLocally(CurrentCrosswordState crossword, String name) throws IOException {
+    public static void addCrosswordLocallyByField(CurrentCrosswordState crossword, String name) throws IOException {
         NonogramImage ni = new NonogramImage(getClearFieldFromCrosswordState(crossword), Color.WHITE);
         database.addCrossword(transferNonogramImageToCrosswordState(ni), name);
+    }
+
+    public static void addCrosswordLocallyByParametres(CurrentCrosswordState crossword, String name) throws IOException {
+        database.addCrossword(crossword, name);
     }
 
     public static Image createImageOnServer(Image image) {

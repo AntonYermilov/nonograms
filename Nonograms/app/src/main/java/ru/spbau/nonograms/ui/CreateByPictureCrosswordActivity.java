@@ -18,8 +18,12 @@ import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import java.io.IOException;
+import java.util.Arrays;
+
 import ru.spbau.nonograms.R;
 import ru.spbau.nonograms.controller.Controller;
+import ru.spbau.nonograms.local_database.CurrentCrosswordState;
 
 public class CreateByPictureCrosswordActivity extends AppCompatActivity {
 
@@ -115,6 +119,33 @@ public class CreateByPictureCrosswordActivity extends AppCompatActivity {
                         }
                     }
                 });
+            }
+        });
+
+        Button saveCrosswordButton = (Button) findViewById(R.id.saveCrosswordButton);
+        saveCrosswordButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                final EditText inputName = new EditText(CreateByPictureCrosswordActivity.this);
+                final AlertDialog dialog = new AlertDialog.Builder(CreateByPictureCrosswordActivity.this)
+                        .setTitle("Save your crossword")
+                        .setMessage("Type in your crosswords' name:")
+                        .setView(inputName)
+                        .setPositiveButton("Save", new DialogInterface.OnClickListener() {
+                            @Override
+                            public void onClick(DialogInterface dialogInterface, int i) {
+                                try {
+                                    CurrentCrosswordState state = Controller.getMadeCrosswordFromLastImage();
+                                    Log.d("Colors: ", Arrays.toString(state.getColors()));
+                                    Controller.addCrosswordLocallyByParametres(state, inputName.getText().toString());
+                                } catch (IOException e) {
+                                    e.printStackTrace();
+                                }
+                            }
+                        })
+                        .setNegativeButton("Cancel", null)
+                        .create();
+                dialog.show();
             }
         });
     }

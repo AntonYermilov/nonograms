@@ -46,6 +46,7 @@ public class CrosswordListActivity extends AppCompatActivity {
             if (crosswordList.get(i).getNumberOfColors() > 1 && colored) {
                 list.add(crosswordList.get(i).getFilename());
             }
+            Log.d("Colors: ", "" + crosswordList.get(i).getNumberOfColors());
         }
         ArrayAdapter<String> adapter = new ArrayAdapter<String>(
                 this, android.R.layout.simple_list_item_1, list);
