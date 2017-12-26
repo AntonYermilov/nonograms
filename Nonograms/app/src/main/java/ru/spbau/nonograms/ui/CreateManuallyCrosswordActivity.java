@@ -55,7 +55,7 @@ public class CreateManuallyCrosswordActivity extends AppCompatActivity implement
         CurrentCrosswordState.ColoredValue[][] rows = new CurrentCrosswordState.ColoredValue[height][0];
 
 
-        current = new CurrentCrosswordState(rows, columns, new int[]{}, null);
+        current = new CurrentCrosswordState(rows, columns, new int[]{}, Color.WHITE, null);
 
         final SurfaceView surface = (SurfaceView) findViewById(R.id.surfaceViewCreate);
         generalDetector = new GestureDetectorCompat(this, new GestureDetector());

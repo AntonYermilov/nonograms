@@ -96,7 +96,7 @@ public class Controller {
             }
 
         }
-        return new CurrentCrosswordState(rows, columns, usedColors, null);
+        return new CurrentCrosswordState(rows, columns, usedColors, Color.WHITE, null);
     }
 
     private static int[][] getClearFieldFromCrosswordState(CurrentCrosswordState state) {

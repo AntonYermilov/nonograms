@@ -50,7 +50,7 @@ public class StandartCrosswords {
                     {black[0], black[0]},
                     {black[0], black[0]},
                     {black[1]}
-            }, new int[] {Color.BLACK} ,null),
+            }, new int[] {Color.BLACK}, Color.WHITE, null),
             new CurrentCrosswordState(new CurrentCrosswordState.ColoredValue[][] {
                     {black[0], black[0]},
                     {black[0], black[0], black[0], black[0]},
@@ -65,7 +65,7 @@ public class StandartCrosswords {
                     {black[0], black[1]},
                     {black[0]},
                     {black[0]}
-            }, new int[] {Color.BLACK}, null),
+            }, new int[] {Color.BLACK}, Color.WHITE, null),
             new CurrentCrosswordState(new CurrentCrosswordState.ColoredValue[][] {
                     {black[0], blue[2], black[0]},
                     {green[0], black[0], blue[0], black[0], green[0]},
@@ -78,6 +78,6 @@ public class StandartCrosswords {
                     {blue[1], black[0], yellow[1]},
                     {blue[0], black[0], green[0], black[0], yellow[0]},
                     {black[0], green[2], black[0]}
-            }, new int[] {Color.BLACK, Color.GREEN, Color.BLUE, Color.YELLOW}, null)
+            }, new int[] {Color.BLACK, Color.GREEN, Color.BLUE, Color.YELLOW}, Color.WHITE, null)
     };
 }
