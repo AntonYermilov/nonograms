@@ -71,6 +71,7 @@ public class CrosswordDBHelper extends SQLiteOpenHelper {
         try (SQLiteDatabase database = this.getWritableDatabase()) {
             ContentValues values = new ContentValues();
             values.put(COLUMN_CROSSWORD_NAME, name);
+            values.put(COLUMN_NUMBER_OF_COLORS, crosswordState.getColors().length);
             long rowId = database.insert(DATABASE_NAME, null, values);
             try (ObjectOutputStream outputStream =
                          new ObjectOutputStream(context.openFileOutput(name + rowId, Context.MODE_PRIVATE))) {

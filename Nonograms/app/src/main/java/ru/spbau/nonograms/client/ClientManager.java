@@ -165,8 +165,7 @@ public class ClientManager {
         jsonObject.add("colors", gson.toJsonTree(nonogram.getColors()));
         jsonObject.add("rows", gson.toJsonTree(nonogram.getRows()));
         jsonObject.add("columns", gson.toJsonTree(nonogram.getColumns()));
-        //TODO add backgroundColor
-        //jsonObject.add("backgroundColor", nonogram.getBackgroundColor());
+        jsonObject.addProperty("backgroundColor", nonogram.getBackgroundColor());
         return jsonObject;
     }
 
@@ -181,9 +180,7 @@ public class ClientManager {
         ColoredValue[][] rows = gson.fromJson(jsonObject.get("rows"), ColoredValue[][].class);
         ColoredValue[][] columns = gson.fromJson(jsonObject.get("columns"), ColoredValue[][].class);
         int backgroundColor = jsonObject.get("backgroundColor").getAsInt();
-        //TODO add backgroundColor
-        //return new CurrentCrosswordState(rows, columns, colors,  null);
-        return new CurrentCrosswordState(rows, columns, colors, null);
+        return new CurrentCrosswordState(rows, columns, colors, backgroundColor, null);
     }
 
 }
