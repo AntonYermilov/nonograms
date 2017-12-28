@@ -1,47 +1,26 @@
 #include <nonogram_config.h>
-#include <json.hpp>
-#include <unordered_map>
+#include <iostream>
 
-using json = nlohmann::json;
 using std::vector;
 using std::string;
 using std::unordered_map;
 
-NonogramConfig::NonogramConfig(const string &jsonNonogram) {
-    json nonogram = json::parse(jsonNonogram);
-    height = nonogram["height"];
-    width = nonogram["width"];
-    colors = nonogram["colors"];
+NonogramConfig::NonogramConfig(const Image &image) {
+    height = image.getHeight();
+    width = image.getWidth();
+    colors = image.getColors() - 1;
 
-    rows.resize(height);
-    columns.resize(width);
-    
-    for (int i = 0; i < height; i++) {
-        json &row = nonogram["rows"][i];
-        for (int j = 0; j < (int) row.size(); j++) {
-            rows[i].push_back({row[j]["size"], row[j]["color"]});
-        }
-    }
-    for (int i = 0; i < width; i++) {
-        json &column = nonogram["columns"][i];
-        for (int j = 0; j < (int) column.size(); j++) {
-            columns[i].push_back({column[j]["size"], column[j]["color"]});
-        }
-    }
-}
+    colorId = unordered_map<int, int>(32);
+    colorRGB = vector<int>(colors + 1);
 
-NonogramConfig::NonogramConfig(const vector<vector<int> > &field, int backgroundColor) {
-    height = field.size();
-    width = field[0].size();
-    colors = 0;
-
-    unordered_map<int, int> colorId(32);
-
-    colorId[backgroundColor] = 0;
+    colorId[image.getBackgroundColor()] = 0;
+    colorRGB[0] = image.getBackgroundColor();
     for (int i = 0; i < height; i++) {
         for (int j = 0; j < width; j++) {
-            if (colorId.find(field[i][j]) == colorId.end()) {
-                colorId[field[i][j]] = ++colors;
+            if (colorId.find(image[i][j]) == colorId.end()) {
+                int size = colorId.size();
+                colorRGB[size] = image[i][j];
+                colorId[image[i][j]] = size;
             }
         }
     }
@@ -49,26 +28,35 @@ NonogramConfig::NonogramConfig(const vector<vector<int> > &field, int background
     rows = vector<vector<Segment> >(height);
     for (int i = 0; i < height; i++) {
         for (int l = 0, r = 0; r < width; l = r) {
-            while (r < width && field[i][l] == field[i][r]) {
+            while (r < width && image[i][l] == image[i][r]) {
                 r++;
             }
-            if (field[i][l] != backgroundColor) {
-                rows[i].push_back({r - l, colorId[field[i][l]]});
+            if (image[i][l] != image.getBackgroundColor()) {
+                rows[i].push_back({r - l, colorId[image[i][l]]});
             }
         }
     }
 
     columns = vector<vector<Segment> >(width);
     for (int i = 0; i < width; i++) {
-        for (int l = 0, r = 0; r < width; l = r) {
-            while (r < height && field[l][i] == field[r][i]) {
+        for (int l = 0, r = 0; r < height; l = r) {
+            while (r < height && image[l][i] == image[r][i]) {
                 r++;
             }
-            if (field[l][i] != backgroundColor) {
-                columns[i].push_back({r - l, colorId[field[l][i]]});
+            if (image[l][i] != image.getBackgroundColor()) {
+                columns[i].push_back({r - l, colorId[image[l][i]]});
             }
         }
     }
+}
+
+int NonogramConfig::getColorId(int color) const {
+    auto element = colorId.find(color);
+    return element != colorId.end() ? element->second : -1;
+}
+
+int NonogramConfig::getColorRGB(int id) const {
+    return id >= 0 && id < (int) colorRGB.size() ? colorRGB[id] : -1;
 }
 
 int NonogramConfig::getHeight() const {

@@ -16,7 +16,7 @@ $(LIB): $(BINDIR) $(OBJECTS)
 	$(CXX) $(OBJECTS) -shared -Wl,-soname,-$(LIB) -o $(LIB)
 
 $(BINDIR)/%.o: $(SRCDIR)/%.cpp
-	$(CXX) $(CXXFLAGS) -c -o $@ -fPIC $<
+	$(CXX) $(CXXFLAGS) $(DEBUGFLAGS) -c -o $@ -fPIC $<
 
 $(BINDIR):
 	mkdir -p $(BINDIR)

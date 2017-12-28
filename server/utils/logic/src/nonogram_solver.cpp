@@ -4,32 +4,44 @@
 
 using std::vector;
 using std::fill;
-using std::cout;
+using std::cerr;
 
-const int NonogramSolver::EXACTLY_WHITE = 0;
-const int NonogramSolver::UNKNOWN = -1;
+const int8_t NonogramSolver::BACKGROUND = 0;
+const int8_t NonogramSolver::UNKNOWN = -1;
 
 NonogramSolver::NonogramSolver(const NonogramConfig &config) : config(config), isSolved(false), isCorrect(false) {
-    field = vector<vector<int> >(config.getHeight(), vector<int>(config.getWidth(), -1));
+    field = vector<vector<int8_t> >(config.getHeight(), vector<int8_t>(config.getWidth(), UNKNOWN));
     isUpdatedRow = vector<int8_t>(config.getHeight(), true);
     isUpdatedColumn = vector<int8_t>(config.getWidth(), true);
+}
+
+int NonogramSolver::get(int row, int column) const {
+    return field[row][column];
+}
+
+void NonogramSolver::set(int row, int column, int color) {
+    field[row][column] = color;
+    isUpdatedRow[row] = true;
+    isUpdatedColumn[column] = true;
 }
 
 void NonogramSolver::printField() const {
     for (int i = 0; i < config.getHeight(); i++) {
         for (int j = 0; j < config.getWidth(); j++) {
             if (field[i][j] == UNKNOWN) {
-                cout << "?";
+                cerr << "?";
+            } else if (field[i][j] == BACKGROUND) {
+                cerr << " ";
             } else {
-                cout << field[i][j];
+                cerr << int(field[i][j]);
             }
         }
-        cout << '\n';
+        cerr << '\n';
     }
-    cout << '\n';
+    cerr << '\n';
 }
 
-bool NonogramSolver::solve() {
+bool NonogramSolver::findSolution() {
     if (isSolved)
         return isCorrect;
 
@@ -56,7 +68,6 @@ bool NonogramSolver::solve() {
         fill(isUpdatedColumn.begin(), isUpdatedColumn.end(), false);
     }
 
-
     isCorrect = filled == config.getHeight() * config.getWidth();
     return isCorrect;
 }
@@ -67,14 +78,14 @@ int NonogramSolver::fillRow(int row, const vector<NonogramConfig::Segment> &sequ
     vector<vector<int8_t> > isColored(config.getColors() + 1, vector<int8_t>(config.getWidth()));
     vector<int8_t> isWhite(config.getWidth());
     for (int column = 0; column < config.getWidth(); column++) {
-        isWhite[column] = field[row][column] == EXACTLY_WHITE;
+        isWhite[column] = field[row][column] == BACKGROUND;
         for (int color = 1; color <= config.getColors(); color++) {
             isColored[color][column] = field[row][column] == color;
             isColored[0][column] |= isColored[color][column];
         }
     }
 
-    vector<int> updatedColors = getUpdatedColors(sequence, isColored, isWhite);
+    vector<int8_t> updatedColors = getUpdatedColors(sequence, isColored, isWhite);
     for (int column = 0; column < config.getWidth(); column++) {
         if (updatedColors[column] != field[row][column]) {
             filledNew++;
@@ -92,14 +103,14 @@ int NonogramSolver::fillColumn(int column, const vector<NonogramConfig::Segment>
     vector<vector<int8_t> > isColored(config.getColors() + 1, vector<int8_t>(config.getHeight()));
     vector<int8_t> isWhite(config.getHeight());
     for (int row = 0; row < config.getHeight(); row++) {
-        isWhite[row] = field[row][column] == EXACTLY_WHITE;
+        isWhite[row] = field[row][column] == BACKGROUND;
         for (int color = 1; color <= config.getColors(); color++) {
             isColored[color][row] = field[row][column] == color;
             isColored[0][row] |= isColored[color][row];
         }
     }
 
-    vector<int> updatedColors = getUpdatedColors(sequence, isColored, isWhite);
+    vector<int8_t> updatedColors = getUpdatedColors(sequence, isColored, isWhite);
     for (int row = 0; row < config.getHeight(); row++) {
         if (updatedColors[row] != field[row][column]) {
             filledNew++;
@@ -111,7 +122,7 @@ int NonogramSolver::fillColumn(int column, const vector<NonogramConfig::Segment>
     return filledNew;
 }
 
-vector<int> NonogramSolver::getUpdatedColors(const vector<NonogramConfig::Segment> &sequence, 
+vector<int8_t> NonogramSolver::getUpdatedColors(const vector<NonogramConfig::Segment> &sequence, 
         const vector<vector<int8_t> > &isColored, const vector<int8_t> &isWhite) const {
     int size = isWhite.size();
     
@@ -130,15 +141,15 @@ vector<int> NonogramSolver::getUpdatedColors(const vector<NonogramConfig::Segmen
             getReversed_2(isColored), getReversed_1(isWhite));
 
     vector<int8_t> canBeWhite = countIfCanBeWhite(sequence, isColored, isWhite, canFitPrefix, canFitSuffix);
-    vector<vector<int> > canBeColored = countIfCanBeColored(sequence, isColored, isWhite, canFitPrefix, canFitSuffix);
+    vector<vector<int8_t> > canBeColored = countIfCanBeColored(sequence, isColored, isWhite, canFitPrefix, canFitSuffix);
 
-    vector<int> updatedColors(size, UNKNOWN);
+    vector<int8_t> updatedColors(size, UNKNOWN);
     for (int i = 0; i < size; i++) {
         if (canBeColored[0][i] > 0 && !canBeWhite[i]) {
             updatedColors[i] = canBeColored[0][i];
         }
         if (canBeColored[0][i] == 0 && canBeWhite[i]) {
-            updatedColors[i] = EXACTLY_WHITE;
+            updatedColors[i] = BACKGROUND;
         }
     }
 
@@ -162,20 +173,20 @@ vector<int8_t> NonogramSolver::countIfCanBeWhite(const vector<NonogramConfig::Se
     return canBeWhite;
 }
 
-vector<vector<int> > NonogramSolver::countIfCanBeColored(const vector<NonogramConfig::Segment> &sequence,
+vector<vector<int8_t> > NonogramSolver::countIfCanBeColored(const vector<NonogramConfig::Segment> &sequence,
         const vector<vector<int8_t> > &isColored, const vector<int8_t> &isWhite,
         const vector<vector<int8_t> > &canFitPrefix, const vector<vector<int8_t> > &canFitSuffix) const {
     int size = isWhite.size();
     int blocks = sequence.size();
     int colors = isColored.size();
 
-    vector<int> countWhite = getPrefixSums(isWhite);
-    vector<vector<int> > countColored(colors);
+    vector<int8_t> countWhite = getPrefixSums(isWhite);
+    vector<vector<int8_t> > countColored(colors);
     for (int color = 0; color < colors; color++) {
         countColored[color] = getPrefixSums(isColored[color]);
     }
 
-    vector<vector<int> > intervals(colors, vector<int>(size + 1));
+    vector<vector<int8_t> > intervals(colors, vector<int8_t>(size + 1));
     for (int k = 0; k < blocks; k++) {
         int segSize = sequence[k].getSize();
         int color = sequence[k].getColor();
@@ -205,7 +216,7 @@ vector<vector<int> > NonogramSolver::countIfCanBeColored(const vector<NonogramCo
         }
     }
 
-    vector<vector<int> > canBeColored(colors, vector<int>(size));
+    vector<vector<int8_t> > canBeColored(colors, vector<int8_t>(size));
     for (int color = 1; color < colors; color++) {
         for (int i = 0, inside = 0; i < size; i++) {
             inside += intervals[color][i];
@@ -225,8 +236,8 @@ vector<vector<int8_t> > NonogramSolver::getPossiblePrefixes(const vector<Nonogra
     int blocks = sequence.size();
     int colors = isColored.size();
 
-    vector<int> countWhite = getPrefixSums(isWhite);
-    vector<vector<int> > countColored(colors);
+    vector<int8_t> countWhite = getPrefixSums(isWhite);
+    vector<vector<int8_t> > countColored(colors);
     for (int color = 0; color < colors; color++) {
         countColored[color] = getPrefixSums(isColored[color]);
     }
@@ -266,10 +277,9 @@ vector<vector<int8_t> > NonogramSolver::getPossiblePrefixes(const vector<Nonogra
     return possible;
 }
 
-
-vector<int> NonogramSolver::getPrefixSums(const vector<int8_t> &array) const {
+vector<int8_t> NonogramSolver::getPrefixSums(const vector<int8_t> &array) const {
     int size = array.size();
-    vector<int> sums(size + 1);
+    vector<int8_t> sums(size + 1);
     for (int i = 1; i <= size; i++) {
         sums[i] = sums[i - 1] + array[i - 1];
     }
