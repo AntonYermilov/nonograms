@@ -7,8 +7,6 @@ import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
 import android.util.Log;
 
-import java.io.FileNotFoundException;
-import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
@@ -72,6 +70,7 @@ public class CrosswordDBHelper extends SQLiteOpenHelper {
             ContentValues values = new ContentValues();
             values.put(COLUMN_CROSSWORD_NAME, name);
             values.put(COLUMN_NUMBER_OF_COLORS, crosswordState.getColors().length);
+            Log.d("Colors: ", crosswordState.getColors().length + " inserted");
             long rowId = database.insert(DATABASE_NAME, null, values);
             try (ObjectOutputStream outputStream =
                          new ObjectOutputStream(context.openFileOutput(name + rowId, Context.MODE_PRIVATE))) {

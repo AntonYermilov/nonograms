@@ -2,11 +2,6 @@ package ru.spbau.nonograms.local_database;
 
 import android.graphics.Color;
 
-import java.lang.reflect.Array;
-import java.util.ArrayList;
-
-import ru.spbau.nonograms.logic.NonogramImage;
-
 public class StandartCrosswords {
 
     private final static CurrentCrosswordState.ColoredValue[] black =

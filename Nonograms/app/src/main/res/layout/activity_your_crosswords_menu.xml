@@ -21,14 +21,14 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:fontFamily="casual"
-            android:text="create by picture" />
+            android:text="@string/create_by_picture" />
 
         <Button
             android:id="@+id/createManuallyButton"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:fontFamily="casual"
-            android:text="Create manually" />
+            android:text="@string/create_manually" />
     </LinearLayout>
 
     <TextView
@@ -36,7 +36,7 @@
         android:layout_width="246dp"
         android:layout_height="70dp"
         android:fontFamily="casual"
-        android:text="You can do with your crosswords the following:"
+        android:text="@string/you_can_do_text"
         android:textSize="18sp"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintHorizontal_bias="0.496"

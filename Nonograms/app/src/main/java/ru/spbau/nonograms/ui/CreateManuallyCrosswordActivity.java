@@ -1,16 +1,12 @@
 package ru.spbau.nonograms.ui;
 
 import android.content.DialogInterface;
-import android.content.Intent;
 import android.graphics.Canvas;
 import android.graphics.Color;
 import android.support.v4.view.GestureDetectorCompat;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
-import android.text.InputType;
-import android.util.Log;
-import android.view.Gravity;
 import android.view.MotionEvent;
 import android.view.ScaleGestureDetector;
 import android.view.SurfaceHolder;
@@ -18,9 +14,6 @@ import android.view.SurfaceView;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
-import android.widget.LinearLayout;
-import android.widget.TextView;
-
 import java.io.IOException;
 
 import ru.spbau.nonograms.R;
@@ -35,7 +28,6 @@ public class CreateManuallyCrosswordActivity extends AppCompatActivity implement
     private SurfaceHolder surfaceHolder;
 
     private CurrentCrosswordState current;
-//    private String filename;
     private int lastColor;
     private GestureDetectorCompat generalDetector;
     private ScaleGestureDetector scaleDetector;
@@ -79,7 +71,7 @@ public class CreateManuallyCrosswordActivity extends AppCompatActivity implement
                             @Override
                             public void onClick(DialogInterface dialogInterface, int i) {
                                 try {
-                                    Controller.addCrosswordLocally(current, inputName.getText().toString());
+                                    Controller.addCrosswordLocallyByField(current, inputName.getText().toString());
                                 } catch (IOException e) {
                                     e.printStackTrace();
                                 }

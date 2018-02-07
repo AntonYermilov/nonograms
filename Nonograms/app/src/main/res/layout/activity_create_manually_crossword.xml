@@ -23,11 +23,10 @@
         android:layout_height="wrap_content"
         android:layout_weight="1"
         android:fontFamily="casual"
-        android:text="Save"
+        android:text="@string/save_text"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintHorizontal_bias="0.945"
         app:layout_constraintLeft_toLeftOf="parent"
         app:layout_constraintRight_toRightOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/surfaceView"
         app:layout_constraintVertical_bias="0.673" />
 </android.support.constraint.ConstraintLayout>

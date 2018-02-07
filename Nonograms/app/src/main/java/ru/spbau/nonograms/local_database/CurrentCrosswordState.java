@@ -51,11 +51,11 @@ public class CurrentCrosswordState implements Serializable {
             }
         }
         this.colors = Arrays.copyOf(colors, colors.length);
-        for (int i = 0; i < rows.length; i++) {
-            rowsMax = Math.max(rowsMax, rows[i].length);
+        for (ColoredValue[] row : rows) {
+            rowsMax = Math.max(rowsMax, row.length);
         }
-        for (int i = 0; i < columns.length; i++) {
-            columnsMax = Math.max(columnsMax, columns[i].length);
+        for (ColoredValue[] column : columns) {
+            columnsMax = Math.max(columnsMax, column.length);
         }
     }
 

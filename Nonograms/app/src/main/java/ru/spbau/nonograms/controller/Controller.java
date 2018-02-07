@@ -7,36 +7,38 @@ import android.graphics.drawable.BitmapDrawable;
 import android.widget.ImageView;
 
 import java.io.IOException;
-import java.sql.Array;
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Random;
-import java.util.TreeSet;
 
+import ru.spbau.nonograms.client.ClientManager;
 import ru.spbau.nonograms.local_database.CrosswordDBHelper;
 import ru.spbau.nonograms.local_database.CrosswordInfo;
 import ru.spbau.nonograms.local_database.CurrentCrosswordState;
 import ru.spbau.nonograms.logic.NonogramImage;
 import ru.spbau.nonograms.logic.NonogramLogic;
+import ru.spbau.nonograms.model.Image;
 
+/**
+ * Controller connects all parts of the program.
+ * Sometimes it does some
+ */
 public class Controller {
 
     private static CrosswordDBHelper database;
 
-    public static boolean checkCorrectness() {
-        return false;
-    }
-
     //pair -- result + crossword
     //receives an image, user posted
-    public static Bitmap makeCrosswordViewFromImage(ImageView givenImage) {
-        return NonogramLogic.createNonogram(getBitmap(givenImage), 70, 70, 5);
+    public static Bitmap makeCrosswordViewFromImage(ImageView givenImage, int width, int height, int colors) {
+        return NonogramLogic.createNonogram(getBitmap(givenImage), width, height, colors);
     }
 
-    public static NonogramImage getMadeCrosswordFromLastImage() {
+    public static CurrentCrosswordState getMadeCrosswordFromLastImage() {
         return NonogramLogic.getLastNonogram();
+    }
+
+    boolean canBeSolvedOnServer(Image image) {
+        return ClientManager.solveNonogram(image);
     }
 
     public static boolean checkCorrectness(CurrentCrosswordState current) {
@@ -59,7 +61,8 @@ public class Controller {
         return database.getAllCrosswords();
     }
 
-    public static CurrentCrosswordState getLocalCrosswordByFilename(String filename) throws IOException, ClassNotFoundException {
+    public static CurrentCrosswordState getLocalCrosswordByFilename(String filename)
+            throws IOException, ClassNotFoundException {
         return database.getCrosswordByFilename(filename);
     }
 
@@ -67,9 +70,17 @@ public class Controller {
         database.updateByFilename(filename, state);
     }
 
-    public static void addCrosswordLocally(CurrentCrosswordState crossword, String name) throws IOException {
+    public static void addCrosswordLocallyByField(CurrentCrosswordState crossword, String name) throws IOException {
         NonogramImage ni = new NonogramImage(getClearFieldFromCrosswordState(crossword), Color.WHITE);
         database.addCrossword(transferNonogramImageToCrosswordState(ni), name);
+    }
+
+    public static void addCrosswordLocallyByParametres(CurrentCrosswordState crossword, String name) throws IOException {
+        database.addCrossword(crossword, name);
+    }
+
+    public static Image createImageOnServer(Image image) {
+        return ClientManager.createNonogram(image);
     }
 
     private static CurrentCrosswordState transferNonogramImageToCrosswordState(NonogramImage ni) {

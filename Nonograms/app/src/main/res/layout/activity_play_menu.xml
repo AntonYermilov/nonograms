@@ -23,21 +23,21 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:fontFamily="casual"
-            android:text="Black'n'White" />
+            android:text="@string/black_n_white" />
 
         <Button
             android:id="@+id/ColorButton"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:fontFamily="casual"
-            android:text="Coloured" />
+            android:text="@string/coloured" />
 
         <Button
             android:id="@+id/yourCrosswordsButton"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:fontFamily="casual"
-            android:text="Your crosswords" />
+            android:text="@string/your_crosswords" />
     </LinearLayout>
 
     <TextView
@@ -45,7 +45,7 @@
         android:layout_width="257dp"
         android:layout_height="71dp"
         android:fontFamily="casual"
-        android:text="Choose crossword type you want to solve:"
+        android:text="@string/choose_crossword_text"
         android:textSize="18sp"
         app:layout_constraintBottom_toTopOf="@+id/linearLayout2"
         app:layout_constraintHorizontal_bias="0.501"

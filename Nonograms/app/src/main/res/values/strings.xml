@@ -7,4 +7,17 @@
     <string name="your_image_text">Your image:</string>
     <string name="make_puzzle_text">Make puzzle</string>
     <string name="upload_picture_text">upload picture</string>
+    <string name="NumberOfColorsStr">, number of colors:</string>
+    <string name="WowMsg">WOW! You solved it right!</string>
+    <string name="MistakesMsg">There are some mistakes, try to solve it again. =(</string>
+    <string name="save_crossword">Save crossword</string>
+    <string name="save_text">Save</string>
+    <string name="check_text">Check</string>
+    <string name="black_n_white">Black\'n\'White</string>
+    <string name="coloured">Coloured</string>
+    <string name="your_crosswords">Your crosswords</string>
+    <string name="choose_crossword_text">Choose crossword type you want to solve:</string>
+    <string name="create_by_picture">create by picture</string>
+    <string name="create_manually">Create manually</string>
+    <string name="you_can_do_text">You can do with your crosswords the following:</string>
 </resources>

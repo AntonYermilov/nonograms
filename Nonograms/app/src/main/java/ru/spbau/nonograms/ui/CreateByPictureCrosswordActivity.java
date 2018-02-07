@@ -1,18 +1,29 @@
 package ru.spbau.nonograms.ui;
 
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.graphics.Bitmap;
 import android.net.Uri;
 import android.provider.MediaStore;
+import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.text.InputType;
+import android.util.Log;
 import android.view.View;
 import android.widget.Button;
+import android.widget.EditText;
 import android.widget.ImageView;
+import android.widget.LinearLayout;
+import android.widget.TextView;
 import android.widget.Toast;
+
+import java.io.IOException;
+import java.util.Arrays;
 
 import ru.spbau.nonograms.R;
 import ru.spbau.nonograms.controller.Controller;
+import ru.spbau.nonograms.local_database.CurrentCrosswordState;
 
 public class CreateByPictureCrosswordActivity extends AppCompatActivity {
 
@@ -41,20 +52,100 @@ public class CreateByPictureCrosswordActivity extends AppCompatActivity {
         makePuzzleButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                try {
-                    Bitmap result = Controller.makeCrosswordViewFromImage(givenImage);
-                    if (Controller.getMadeCrosswordFromLastImage() == null) {
-                        Toast nonSuccess = Toast.makeText(CreateByPictureCrosswordActivity.this,
-                                "Sorry, we couldn't build puzzle.", Toast.LENGTH_LONG);
-                        nonSuccess.show();
+
+                final EditText inputWidth = new EditText(CreateByPictureCrosswordActivity.this);
+                inputWidth.setInputType(InputType.TYPE_CLASS_NUMBER);
+                final EditText inputHeight = new EditText(CreateByPictureCrosswordActivity.this);
+                inputHeight.setInputType(InputType.TYPE_CLASS_NUMBER);
+                TextView multiplySign = new TextView(CreateByPictureCrosswordActivity.this);
+                multiplySign.setText("x");
+                TextView colorText = new TextView(CreateByPictureCrosswordActivity.this);
+                colorText.setText(R.string.NumberOfColorsStr);
+                final EditText inputColors = new EditText(CreateByPictureCrosswordActivity.this);
+                inputColors.setInputType(InputType.TYPE_CLASS_NUMBER);
+                LinearLayout dataView = new LinearLayout(CreateByPictureCrosswordActivity.this);
+                dataView.setOrientation(LinearLayout.HORIZONTAL);
+                dataView.addView(inputWidth);
+                dataView.addView(multiplySign);
+                dataView.addView(inputHeight);
+                dataView.addView(colorText);
+                dataView.addView(inputColors);
+                final AlertDialog dialog = new AlertDialog.Builder(CreateByPictureCrosswordActivity.this)
+                        .setTitle("Make new crossword")
+                        .setMessage("Type in width, height and number of colors to be used:")
+                        .setView(dataView)
+                        .setPositiveButton("Create", new DialogInterface.OnClickListener() {
+                            @Override
+                            public void onClick(DialogInterface dialogInterface, int i) {
+
+                            }
+                        })
+                        .setNegativeButton("Cancel", null)
+                        .create();
+                dialog.show();
+                dialog.getButton(android.app.AlertDialog.BUTTON_POSITIVE).setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View view) {
+                        String widthString = inputWidth.getText().toString();
+                        String heightString = inputHeight.getText().toString();
+                        String colorsString = inputColors.getText().toString();
+                        if (widthString.length() == 0 || widthString.length() > 3 ||
+                                heightString.length() == 0 || heightString.length() > 3 ||
+                                colorsString.length() == 0 || colorsString.length() > 2) {
+                            return;
+                        }
+                        int width = Integer.parseInt(widthString);
+                        int height = Integer.parseInt(heightString);
+                        int colors = Integer.parseInt(colorsString);
+                        if (width < 5 || width > 80 || height < 5 || height > 80 ||
+                                colors < 2 || colors > 8) {
+                            return;
+                        }
+                        try {
+                            Log.d("CreateByPicture: ", width + " " + height + " " + (colors - 1));
+                            Bitmap result = Controller.makeCrosswordViewFromImage(givenImage, width, height, colors - 1);
+                            if (Controller.getMadeCrosswordFromLastImage() == null) {
+                                Toast nonSuccess = Toast.makeText(CreateByPictureCrosswordActivity.this,
+                                        "We don't guarantee the puzzle can be solved", Toast.LENGTH_LONG);
+                                nonSuccess.show();
+                            }
+                            resultImage.setImageBitmap(result);
+                            dialog.dismiss();
+                        } catch (OutOfMemoryError e) {
+                            Toast nonSuccess = Toast.makeText(CreateByPictureCrosswordActivity.this,
+                                    "Sorry, the picture was too big.", Toast.LENGTH_LONG);
+                            nonSuccess.show();
+                            System.gc();
+                        }
                     }
-                    resultImage.setImageBitmap(result);
-                } catch (OutOfMemoryError e) {
-                    Toast nonSuccess = Toast.makeText(CreateByPictureCrosswordActivity.this,
-                            "Sorry, the picture was too big.", Toast.LENGTH_LONG);
-                    nonSuccess.show();
-                    System.gc();
-                }
+                });
+            }
+        });
+
+        Button saveCrosswordButton = (Button) findViewById(R.id.saveCrosswordButton);
+        saveCrosswordButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                final EditText inputName = new EditText(CreateByPictureCrosswordActivity.this);
+                final AlertDialog dialog = new AlertDialog.Builder(CreateByPictureCrosswordActivity.this)
+                        .setTitle("Save your crossword")
+                        .setMessage("Type in your crosswords' name:")
+                        .setView(inputName)
+                        .setPositiveButton("Save", new DialogInterface.OnClickListener() {
+                            @Override
+                            public void onClick(DialogInterface dialogInterface, int i) {
+                                try {
+                                    CurrentCrosswordState state = Controller.getMadeCrosswordFromLastImage();
+                                    Log.d("Colors: ", Arrays.toString(state.getColors()));
+                                    Controller.addCrosswordLocallyByParametres(state, inputName.getText().toString());
+                                } catch (IOException e) {
+                                    e.printStackTrace();
+                                }
+                            }
+                        })
+                        .setNegativeButton("Cancel", null)
+                        .create();
+                dialog.show();
             }
         });
     }

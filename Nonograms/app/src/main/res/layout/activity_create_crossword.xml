@@ -24,7 +24,7 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:columnCount="2"
-        android:rowCount="3"
+        android:rowCount="4"
         app:layout_constraintLeft_toLeftOf="@+id/guideline"
         app:layout_constraintRight_toRightOf="@+id/guideline1"
         app:layout_constraintBottom_toBottomOf="parent"
@@ -91,5 +91,15 @@
             app:srcCompat="@android:drawable/ic_menu_gallery"
             android:contentDescription="@string/your_image_text" />
 
+        <Button
+            android:id="@+id/saveCrosswordButton"
+            android:layout_width="170dp"
+            android:layout_height="50dp"
+            android:layout_column="0"
+            android:layout_columnSpan="2"
+            android:layout_gravity="fill"
+            android:layout_row="3"
+            android:fontFamily="casual"
+            android:text="@string/save_crossword" />
     </GridLayout>
 </android.support.constraint.ConstraintLayout>
