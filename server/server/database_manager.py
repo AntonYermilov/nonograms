@@ -1,67 +1,59 @@
-import mysql.connector as mariadb
-from json import loads, dumps
+import os
+
+from sqlobject import *
+from json import loads, load, dumps, dump
 
 from logger import Logger
+from database_objects import *
 
-TABLES = {}
-TABLES["nonogram"] = (
-        "CREATE TABLE IF NOT EXISTS `nonogram` ("
-        "`id` INT AUTO_INCREMENT PRIMARY KEY,"
-        "`name` TEXT(32),"
-        "`author` TEXT(32),"
-        "`height` INT NOT NULL,"
-        "`width` INT NOT NULL,"
-        "`data` MEDIUMTEXT);")
+TABLES = [Nonogram]
 
 class DatabaseManager:
 
-    def __init__(self, user, password, db_name):
-        self.db_name = db_name
-        self.mariadb_connection = mariadb.connect(user=user, password=password, database=db_name)
-        self.cursor = self.mariadb_connection.cursor()
-        
-        for name, cmd in TABLES.items():
-            try:
-                Logger.writeInfo("Creating table `%s`: " % name)
-                self.cursor.execute(cmd)
-                Logger.writeInfo("OK")
-            except mariadb.Error as e:
-                Logger.writeError(e.msg)
+    def __init__(self, user, password, db_name, db_storage):
+        sqlhub.processConnection = connectionForURI('mysql://{}:{}@/{}'.format(user, password, db_name))
+        self.db_storage = db_storage
 
-    def loadNonogram(self, data):
+        for table in TABLES:
+            try:
+                Logger.writeInfo("Creating table `{}`: ".format(table.__name__))
+                table.createTable(ifNotExists=True)
+                Logger.writeInfo("OK")
+            except dberrors.Error as e:
+                Logger.writeError("Error when creating table occurred, args: {}".format(e.args))
+
+    def saveNonogram(self, data):
         try:
-            self.cursor.execute("INSERT INTO `nonogram` (`name`, `author`, `height`, `width`, `data`)"
-                    " VALUES ('%s', '%s', %d, %d, '%s');" % (data["name"], data["author"], data["data"]["height"], data["data"]["width"], 
-                        dumps(data["data"], separators=(',', ':'))))
-            self.mariadb_connection.commit()
+            image = data["data"]
+            id = Nonogram(name=data["name"], author=data["author"], height=image["height"], width=image["width"]).id
+
+            with open(os.path.join(self.db_storage, str(id)), 'w') as image_storage:
+                dump(image, image_storage, separators=(',', ':'))
             return {"response": "ok", "data": ""}
-        except mariadb.Error as e:
-            Logger.writeError(e.msg)
-            return {"response": "fail", "desc": e.msg}
+        except (OSError, dberrors.Error) as e:
+            Logger.writeError("Error when saving nonogram occurred, args: {}".format(e.args))
+            return {"response": "fail", "desc": "saving nonogram failed"}
 
     def getNonogramPreviewInfo(self, data):
         try:
-            self.cursor.execute("SELECT `id`, `name`, `author`, `height`, `width` FROM nonogram LIMIT %d, %d;" % (data["from"], data["amount"]))
             response = {"response": "ok", "data": []}
-            for Id, name, author, height, width in self.cursor:
-                response["data"].append({"id": Id, "name": name, "author": author, "height": height, "width": width})
+            for image in list(Nonogram.select()):
+                response["data"].append(dict((c, getattr(image, c)) for c in image.sqlmeta.columns))
+                response["data"][-1]["id"] = image.id
             return response
-        except mariadb.Error as e:
-            Logger.writeError(e.msg)
-            return {"response": "fail", "desc": e.msg}
+        except dberrors.Error as e:
+            Logger.writeError("Error when getting preview info occurred, args: {}".format(e.args))
+            return {"response": "fail", "desc": "getting preview info failed"}
 
     def getNonogramById(self, data):
+        id = data["id"] 
         try:
-            self.cursor.execute("SELECT `data` FROM `nonogram` WHERE id=%d;" % data["id"])
-            row = self.cursor.fetchone()
-            if row is None:
-                return {"response": "fail", "desc": "nonogram with such `id` does not exist"}
-            return {"response": "ok", "data": row[0]}
-        except mariadb.Error as e:
-            Logger.writeError(e.msg)
-            return {"response": "fail", "desc": e.msg}
+            with open(os.path.join(self.db_storage, str(id)), 'r') as image_storage:
+                return {"response": "ok", "data": load(image_storage)}
+        except OSError as e:
+            Logger.writeError("Image {} not found".format(id))
+            return {"response": "fail", "desc": "image not found"}
 
     def close(self):
-        self.cursor.close()
-        self.mariadb_connection.close()
+        sqlhub.processConnection = None
 
