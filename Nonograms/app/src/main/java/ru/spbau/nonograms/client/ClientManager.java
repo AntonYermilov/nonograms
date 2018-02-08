@@ -14,6 +14,7 @@ import java.util.logging.Logger;
 
 import ru.spbau.nonograms.local_database.CurrentCrosswordState;
 import ru.spbau.nonograms.model.Image;
+import ru.spbau.nonograms.model.NonogramPreview;
 
 import static ru.spbau.nonograms.local_database.CurrentCrosswordState.ColoredValue;
 
@@ -28,17 +29,17 @@ public class ClientManager {
      * @return {@code true} if nonogram was loaded to server successfully;
      * {@code false} otherwise
      */
-    public static boolean loadNonogram(CurrentCrosswordState nonogram) {
+    public static boolean saveNonogram(CurrentCrosswordState nonogram, String name, String author) {
         Gson gson = new GsonBuilder().create();
-        JsonObject json = createJsonObject("loadNonogram");
-        json.getAsJsonObject("data").addProperty("name", "default");
-        json.getAsJsonObject("data").addProperty("author", "default");
-        json.getAsJsonObject("data").addProperty("height", nonogram.getHeight());
-        json.getAsJsonObject("data").addProperty("width", nonogram.getWidth());
+        JsonObject json = createJsonObject("saveNonogram");
+        json.getAsJsonObject("data").addProperty("name", name);
+        json.getAsJsonObject("data").addProperty("author", author);
+        json.getAsJsonObject("data").add("height", gson.toJsonTree(nonogram.getHeight()));
+        json.getAsJsonObject("data").add("width", gson.toJsonTree(nonogram.getWidth()));
         json.getAsJsonObject("data").add("data", nonogramToJson(nonogram));
 
-        String response = sendToServer("loadNonogram", json.toString());
-        return response != null && processResponse("loadNonogram", response) != null;
+        String response = sendToServer("saveNonogram", json.toString());
+        return response != null && processResponse("saveNonogram", response) != null;
     }
 
     /**
@@ -55,6 +56,24 @@ public class ClientManager {
             JsonElement data = processResponse("getNonogramById", response);
             if (data != null) {
                 return jsonToNonogram(data.getAsJsonObject());
+            }
+        }
+        return null;
+    }
+
+    public static NonogramPreview[] getNonogramPreviewInfo() {
+        JsonObject json = createJsonObject("getNonogramPreviewInfo");
+
+        String response = sendToServer("getNonogramPreviewInfo", json.toString());
+        if (response != null) {
+            JsonElement data = processResponse("getNonogramPreviewInfo", response);
+            if (data != null) {
+                int size = data.getAsJsonArray().size();
+                NonogramPreview[] previews = new NonogramPreview[size];
+                for (int i = 0; i < size; i++) {
+                    previews[i] = jsonToPreview(data.getAsJsonArray().get(i).getAsJsonObject());
+                }
+                return previews;
             }
         }
         return null;
@@ -179,6 +198,20 @@ public class ClientManager {
         ColoredValue[][] columns = gson.fromJson(jsonObject.get("columns"), ColoredValue[][].class);
         int backgroundColor = jsonObject.get("backgroundColor").getAsInt();
         return new CurrentCrosswordState(rows, columns, colors, backgroundColor, null);
+    }
+
+    /**
+     * Transforms json object to nonogram preview (basic info about nonogram).
+     * @param jsonObject specified json object
+     * @return nonogram preview info that was stored as json object
+     */
+    private static NonogramPreview jsonToPreview(JsonObject jsonObject) {
+        int id = jsonObject.get("id").getAsInt();
+        String name = jsonObject.get("name").getAsString();
+        String author = jsonObject.get("author").getAsString();
+        int height = jsonObject.get("height").getAsInt();
+        int width = jsonObject.get("width").getAsInt();
+        return new NonogramPreview(id, name, author, height, width);
     }
 
 }
