@@ -7,13 +7,9 @@ import android.graphics.drawable.BitmapDrawable;
 import android.widget.ImageView;
 
 import java.io.IOException;
-import java.sql.Array;
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Random;
-import java.util.TreeSet;
 
 import ru.spbau.nonograms.client.ClientManager;
 import ru.spbau.nonograms.local_database.CrosswordDBHelper;

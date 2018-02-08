@@ -60,7 +60,7 @@ public class CreateByPictureCrosswordActivity extends AppCompatActivity {
                 TextView multiplySign = new TextView(CreateByPictureCrosswordActivity.this);
                 multiplySign.setText("x");
                 TextView colorText = new TextView(CreateByPictureCrosswordActivity.this);
-                colorText.setText(", number of colors: ");
+                colorText.setText(R.string.NumberOfColorsStr);
                 final EditText inputColors = new EditText(CreateByPictureCrosswordActivity.this);
                 inputColors.setInputType(InputType.TYPE_CLASS_NUMBER);
                 LinearLayout dataView = new LinearLayout(CreateByPictureCrosswordActivity.this);
