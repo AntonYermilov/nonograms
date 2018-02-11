@@ -110,6 +110,14 @@ public class CurrentCrosswordState implements Serializable {
         return res;
     }
 
+    public void clearField() {
+        for (int i = 0; i < width; i++) {
+            for (int j = 0; j < height; j++) {
+                field[i][j] = new ColoredValue(0, Color.WHITE);
+            }
+        }
+    }
+
     public static class ColoredValue implements Serializable {
         private int value;
         private int color;

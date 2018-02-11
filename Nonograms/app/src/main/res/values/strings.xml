@@ -20,4 +20,13 @@
     <string name="create_by_picture">create by picture</string>
     <string name="create_manually">Create manually</string>
     <string name="you_can_do_text">You can do with your crosswords the following:</string>
+    <string name="clear_text">clear</string>
+    <string name="type_in_name">Type in your crosswords\' name:</string>
+    <string name="save_on_server">save on server</string>
+    <string name="choose_to_solve">Choose crossword you want to solve:</string>
+    <string name="load_new">load new crosswords</string>
+    <string name="choose_to_download">Choose crossword to download:</string>
+    <string name="crossword_name">Crossword name:&#160;</string>
+    <string name="author_name">Author name:&#160;</string>
+    <string name="crossword_size">Crossword size:&#160;</string>
 </resources>

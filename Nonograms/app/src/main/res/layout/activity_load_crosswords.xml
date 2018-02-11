@@ -4,10 +4,11 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context="ru.spbau.nonograms.ui.CrosswordListActivity">
+    tools:context="ru.spbau.nonograms.ui.LoadCrosswordsActivity">
+
 
     <ListView
-        android:id="@+id/List"
+        android:id="@+id/ListToLoad"
         android:layout_width="361dp"
         android:layout_height="404dp"
         app:layout_constraintBottom_toBottomOf="parent"
@@ -17,15 +18,16 @@
         android:layout_marginBottom="16dp" />
 
     <TextView
-        android:id="@+id/textView5"
-        android:layout_width="366dp"
+        android:id="@+id/textView6"
+        android:layout_width="306dp"
         android:layout_height="67dp"
         android:fontFamily="casual"
-        android:text="@string/choose_to_solve"
+        android:text="@string/choose_to_download"
         android:textSize="18sp"
         app:layout_constraintRight_toRightOf="parent"
         app:layout_constraintLeft_toLeftOf="parent"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintVertical_bias="0.036" />
+        app:layout_constraintVertical_bias="0.036"
+        tools:layout_editor_absoluteX="69dp" />
 </android.support.constraint.ConstraintLayout>

@@ -83,5 +83,13 @@ public class YourCrosswordsMenuActivity extends AppCompatActivity {
                 });
             }
         });
+        Button loadNew = (Button) findViewById(R.id.loadNewButton);
+        loadNew.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                Intent intent = new Intent(YourCrosswordsMenuActivity.this, LoadCrosswordsActivity.class);
+                startActivity(intent);
+            }
+        });
     }
 }

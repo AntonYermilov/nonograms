@@ -18,10 +18,11 @@ import ru.spbau.nonograms.local_database.CurrentCrosswordState;
 import ru.spbau.nonograms.logic.NonogramImage;
 import ru.spbau.nonograms.logic.NonogramLogic;
 import ru.spbau.nonograms.model.Image;
+import ru.spbau.nonograms.model.NonogramPreview;
 
 /**
  * Controller connects all parts of the program.
- * Sometimes it does some
+ * Sometimes it does some "translation" between different parts.
  */
 public class Controller {
 
@@ -61,6 +62,10 @@ public class Controller {
         return database.getAllCrosswords();
     }
 
+    public static NonogramPreview[] getOnServerCrosswords() {
+        return ClientManager.getNonogramPreviewInfo();
+    }
+
     public static CurrentCrosswordState getLocalCrosswordByFilename(String filename)
             throws IOException, ClassNotFoundException {
         return database.getCrosswordByFilename(filename);
@@ -72,15 +77,29 @@ public class Controller {
 
     public static void addCrosswordLocallyByField(CurrentCrosswordState crossword, String name) throws IOException {
         NonogramImage ni = new NonogramImage(getClearFieldFromCrosswordState(crossword), Color.WHITE);
-        database.addCrossword(transferNonogramImageToCrosswordState(ni), name);
+        database.addCrossword(transferNonogramImageToCrosswordState(ni), name, "anonymous");
     }
 
     public static void addCrosswordLocallyByParametres(CurrentCrosswordState crossword, String name) throws IOException {
-        database.addCrossword(crossword, name);
+        database.addCrossword(crossword, name, "anonymous");
+    }
+
+    public static void addCrosswordLocallyByPreviewOnServer(NonogramPreview preview) throws IOException {
+        CurrentCrosswordState crossword = ClientManager.getNonogramById(preview.id);
+        database.addCrossword(crossword, preview.name, preview.author);
     }
 
     public static Image createImageOnServer(Image image) {
         return ClientManager.createNonogram(image);
+    }
+
+    public static void addCrosswordOnServerByField(CurrentCrosswordState current, String crosswordName) {
+        NonogramImage ni = new NonogramImage(getClearFieldFromCrosswordState(current), Color.WHITE);
+        ClientManager.saveNonogram(transferNonogramImageToCrosswordState(ni), crosswordName, "anonymous");
+    }
+
+    public static void addCrosswordOnServerByParametres(CurrentCrosswordState state, String crosswordName) {
+        ClientManager.saveNonogram(state, crosswordName, "anonymous");
     }
 
     private static CurrentCrosswordState transferNonogramImageToCrosswordState(NonogramImage ni) {
@@ -137,5 +156,4 @@ public class Controller {
         }
         return bitmap;
     }
-
 }

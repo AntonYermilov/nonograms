@@ -19,6 +19,8 @@ public class CrosswordDBHelper extends SQLiteOpenHelper {
     public static final String COLUMN_ID = "id";
     public static final String COLUMN_NUMBER_OF_COLORS = "number_of_colors";
     public static final String COLUMN_CROSSWORD_NAME = "crossword_name";
+    public static final String COLUMN_AUTHOR_NAME = "author_name";
+
 
     private Context context;
 
@@ -32,11 +34,12 @@ public class CrosswordDBHelper extends SQLiteOpenHelper {
         db.execSQL("CREATE TABLE IF NOT EXISTS " + DATABASE_NAME + " (" +
                 COLUMN_ID + " INTEGER PRIMARY KEY AUTOINCREMENT," +
                 COLUMN_NUMBER_OF_COLORS + " INTEGER," +
-                 COLUMN_CROSSWORD_NAME + " TEXT )");
+                 COLUMN_CROSSWORD_NAME + " TEXT," + COLUMN_AUTHOR_NAME + " TEXT )");
         for (int i = 0; i < StandartCrosswords.toAdd.length; i++) {
             try {
                 ContentValues values = new ContentValues();
                 values.put(COLUMN_CROSSWORD_NAME, "standart");
+                values.put(COLUMN_AUTHOR_NAME, "standart");
                 values.put(COLUMN_NUMBER_OF_COLORS, StandartCrosswords.toAdd[i].getColors().length);
                 long rowId = db.insert(DATABASE_NAME, null, values);
                 try (ObjectOutputStream outputStream =
@@ -65,15 +68,16 @@ public class CrosswordDBHelper extends SQLiteOpenHelper {
     }
 
     public void addCrossword(CurrentCrosswordState crosswordState,
-                             String name) throws IOException {
+                             String crosswordName, String authorName) throws IOException {
         try (SQLiteDatabase database = this.getWritableDatabase()) {
             ContentValues values = new ContentValues();
-            values.put(COLUMN_CROSSWORD_NAME, name);
+            values.put(COLUMN_CROSSWORD_NAME, crosswordName);
+            values.put(COLUMN_AUTHOR_NAME, authorName);
             values.put(COLUMN_NUMBER_OF_COLORS, crosswordState.getColors().length);
             Log.d("Colors: ", crosswordState.getColors().length + " inserted");
             long rowId = database.insert(DATABASE_NAME, null, values);
             try (ObjectOutputStream outputStream =
-                         new ObjectOutputStream(context.openFileOutput(name + rowId, Context.MODE_PRIVATE))) {
+                         new ObjectOutputStream(context.openFileOutput(crosswordName + rowId, Context.MODE_PRIVATE))) {
                 outputStream.writeObject(crosswordState);
                 outputStream.close();
             }
@@ -106,9 +110,10 @@ public class CrosswordDBHelper extends SQLiteOpenHelper {
             if (cursor != null && cursor.moveToFirst()) {
                 do {
                     String name = cursor.getString(cursor.getColumnIndex(COLUMN_CROSSWORD_NAME));
+                    String authorName = cursor.getString(cursor.getColumnIndex(COLUMN_AUTHOR_NAME));
                     int id = cursor.getInt(cursor.getColumnIndex(COLUMN_ID));
                     int colors = cursor.getInt(cursor.getColumnIndex(COLUMN_NUMBER_OF_COLORS));
-                    CrosswordInfo info = new CrosswordInfo(name + id, colors);
+                    CrosswordInfo info = new CrosswordInfo(name, authorName, colors, id);
                     result.add(info);
                 } while (cursor.moveToNext());
             }

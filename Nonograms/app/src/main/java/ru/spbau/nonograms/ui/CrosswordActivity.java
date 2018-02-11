@@ -82,6 +82,15 @@ public class CrosswordActivity extends AppCompatActivity implements SurfaceHolde
             }
         });
 
+        Button clearButton = (Button) findViewById(R.id.clearButton);
+        clearButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                current.clearField();
+                redraw();
+            }
+        });
+
         final int[] colors = current.getColors();
         lastColor = Color.BLACK;
         if (colors.length > 1) {
@@ -90,7 +99,7 @@ public class CrosswordActivity extends AppCompatActivity implements SurfaceHolde
             lastColor = colors[0];
             Point size = new Point();
             getWindowManager().getDefaultDisplay().getSize(size);
-            int width = size.x / 10 * 7;
+            int width = size.x / 10 * 9;
             for (int i = 0; i < colors.length; i++) {
                 colorButtons[i] = new Button(this);
                 colorButtons[i].setBackgroundColor(colors[i]);

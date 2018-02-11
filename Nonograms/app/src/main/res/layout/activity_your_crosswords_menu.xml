@@ -7,8 +7,8 @@
     tools:context="ru.spbau.nonograms.ui.YourCrosswordsMenuActivity">
 
     <LinearLayout
-        android:layout_width="252dp"
-        android:layout_height="119dp"
+        android:layout_width="247dp"
+        android:layout_height="146dp"
         android:orientation="vertical"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintLeft_toLeftOf="parent"
@@ -29,6 +29,13 @@
             android:layout_height="wrap_content"
             android:fontFamily="casual"
             android:text="@string/create_manually" />
+
+        <Button
+            android:id="@+id/loadNewButton"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:fontFamily="casual"
+            android:text="@string/load_new" />
     </LinearLayout>
 
     <TextView
