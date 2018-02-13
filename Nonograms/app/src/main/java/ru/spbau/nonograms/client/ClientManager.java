@@ -61,6 +61,10 @@ public class ClientManager {
         return null;
     }
 
+    /**
+     * Gets basic info about all nonograms on server.
+     * @return array of previews of nonograms that are stored on server
+     */
     public static NonogramPreview[] getNonogramPreviewInfo() {
         JsonObject json = createJsonObject("getNonogramPreviewInfo");
 
@@ -98,6 +102,11 @@ public class ClientManager {
         return false;
     }
 
+    /**
+     * Sends image to server and creates nonogram by transforming it.
+     * @param image image that we want to create nonogram from
+     * @return transformed to nonogram image
+     */
     public static Image createNonogram(Image image) {
         JsonObject json = createJsonObject("createNonogram");
         json.add("data", image.toJson());
