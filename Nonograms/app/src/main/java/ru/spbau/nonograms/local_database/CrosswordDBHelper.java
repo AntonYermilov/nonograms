@@ -12,6 +12,11 @@ import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.util.ArrayList;
 
+/**
+ * A helper for using database.
+ * Database is a table which has links to different files,
+ * where serialized crosswords are stored theirselves.
+ */
 public class CrosswordDBHelper extends SQLiteOpenHelper {
 
     public static final int DATABASE_VERSION = 1;
@@ -24,11 +29,19 @@ public class CrosswordDBHelper extends SQLiteOpenHelper {
 
     private Context context;
 
+    /**
+     * A database helper init.
+     * @param context a context of the application.
+     */
     public CrosswordDBHelper(Context context) {
         super(context, DATABASE_NAME, null, DATABASE_VERSION);
         this.context = context;
     }
 
+    /**
+     * A method which is called when there's no needed database.
+     * @param db database to create.
+     */
     @Override
     public void onCreate(SQLiteDatabase db) {
         db.execSQL("CREATE TABLE IF NOT EXISTS " + DATABASE_NAME + " (" +
@@ -48,7 +61,7 @@ public class CrosswordDBHelper extends SQLiteOpenHelper {
                     outputStream.close();
                 }
             } catch (IOException e) {
-                Log.e("caught an error: ", e.getMessage());
+                Log.e("DBHelper: ", e.getMessage());
             }
         }
     }
@@ -59,6 +72,12 @@ public class CrosswordDBHelper extends SQLiteOpenHelper {
         onCreate(db);
     }
 
+    /**
+     * Update crossword by its file name.
+     * @param filename the name of a file, where crossword to renew stored.
+     * @param crosswordState a crossword to save.
+     * @throws IOException if didn't manage to access the file or to put data there.
+     */
     public void updateByFilename(String filename, CurrentCrosswordState crosswordState) throws IOException {
         try (ObjectOutputStream outputStream =
                      new ObjectOutputStream(context.openFileOutput(filename, Context.MODE_PRIVATE))) {
@@ -67,6 +86,13 @@ public class CrosswordDBHelper extends SQLiteOpenHelper {
         }
     }
 
+    /**
+     * Add crossword to the database
+     * @param crosswordState a crossword to add
+     * @param crosswordName a name of  crossword
+     * @param authorName a name of author of the crossword
+     * @throws IOException if didn't manage to create file or save crossword
+     */
     public void addCrossword(CurrentCrosswordState crosswordState,
                              String crosswordName, String authorName) throws IOException {
         try (SQLiteDatabase database = this.getWritableDatabase()) {
@@ -85,7 +111,15 @@ public class CrosswordDBHelper extends SQLiteOpenHelper {
         }
     }
 
-    public CurrentCrosswordState getCrosswordByFilename(String filename) throws IOException, ClassNotFoundException {
+    /**
+     * Returns crossword stored in database by its filename.
+     * @param filename a name of a file, where crossword stores.
+     * @return crossword stored in the database.
+     * @throws IOException if didn't manage to access file.
+     * @throws ClassNotFoundException if didn't manage to deserialize a crossword.
+     */
+    public CurrentCrosswordState getCrosswordByFilename(String filename)
+            throws IOException, ClassNotFoundException {
         CurrentCrosswordState result = null;
         try (SQLiteDatabase database = this.getReadableDatabase();
              Cursor cursor = database.rawQuery("SELECT * FROM " + DATABASE_NAME, null)) {
@@ -103,6 +137,10 @@ public class CrosswordDBHelper extends SQLiteOpenHelper {
         return result;
     }
 
+    /**
+     * Returns a list of information pieces about crosswords stored in database.
+     * @return a list of information pieces about crosswords stored in database.
+     */
     public ArrayList<CrosswordInfo> getAllCrosswords() {
         ArrayList<CrosswordInfo> result = new ArrayList<>();
         try (SQLiteDatabase database = this.getReadableDatabase();

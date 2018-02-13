@@ -152,7 +152,7 @@ public class CreateByPictureCrosswordActivity extends AppCompatActivity {
                                         Controller.addCrosswordOnServerByParametres(state, inputName.getText().toString());
                                     }
                                 } catch (IOException e) {
-                                    e.printStackTrace();
+                                    Log.e("CreateByPicture", "couldn't save " + e.getMessage());
                                 }
                             }
                         })

@@ -124,7 +124,7 @@ public class CrosswordActivity extends AppCompatActivity implements SurfaceHolde
         try {
             Controller.updateLocalyByFilename(filename, current);
         } catch (IOException e) {
-            e.printStackTrace();
+            Log.e("CrosswordActivity:", "couldn't update file.");
         }
     }
 
