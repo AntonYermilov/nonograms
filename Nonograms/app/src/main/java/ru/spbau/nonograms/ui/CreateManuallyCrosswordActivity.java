@@ -1,22 +1,20 @@
 package ru.spbau.nonograms.ui;
 
 import android.content.DialogInterface;
-import android.content.Intent;
 import android.graphics.Canvas;
 import android.graphics.Color;
 import android.support.v4.view.GestureDetectorCompat;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
-import android.text.InputType;
 import android.util.Log;
-import android.view.Gravity;
 import android.view.MotionEvent;
 import android.view.ScaleGestureDetector;
 import android.view.SurfaceHolder;
 import android.view.SurfaceView;
 import android.view.View;
 import android.widget.Button;
+import android.widget.CheckBox;
 import android.widget.EditText;
 import android.widget.LinearLayout;
 import android.widget.TextView;
@@ -35,7 +33,6 @@ public class CreateManuallyCrosswordActivity extends AppCompatActivity implement
     private SurfaceHolder surfaceHolder;
 
     private CurrentCrosswordState current;
-//    private String filename;
     private int lastColor;
     private GestureDetectorCompat generalDetector;
     private ScaleGestureDetector scaleDetector;
@@ -71,23 +68,43 @@ public class CreateManuallyCrosswordActivity extends AppCompatActivity implement
             @Override
             public void onClick(View view) {
                 final EditText inputName = new EditText(CreateManuallyCrosswordActivity.this);
+                final TextView typeInText = new TextView(CreateManuallyCrosswordActivity.this);
+                typeInText.setText(R.string.type_in_name);
+                final CheckBox saveOnServer = new CheckBox(CreateManuallyCrosswordActivity.this);
+                saveOnServer.setText(R.string.save_on_server);
+                LinearLayout dataView = new LinearLayout(CreateManuallyCrosswordActivity.this);
+                dataView.setOrientation(LinearLayout.VERTICAL);
+                dataView.addView(typeInText);
+                dataView.addView(inputName);
+                dataView.addView(saveOnServer);
                 final AlertDialog dialog = new AlertDialog.Builder(CreateManuallyCrosswordActivity.this)
                         .setTitle("Save your crossword")
-                        .setMessage("Type in your crosswords' name:")
-                        .setView(inputName)
+                        .setView(dataView)
                         .setPositiveButton("Save", new DialogInterface.OnClickListener() {
                             @Override
                             public void onClick(DialogInterface dialogInterface, int i) {
                                 try {
                                     Controller.addCrosswordLocallyByField(current, inputName.getText().toString());
+                                    if (saveOnServer.isChecked()) {
+                                        Controller.addCrosswordOnServerByField(current, inputName.getText().toString());
+                                    }
                                 } catch (IOException e) {
-                                    e.printStackTrace();
+                                    Log.e("create manually: ", "error saving crossword");
                                 }
                             }
                         })
                         .setNegativeButton("Cancel", null)
                         .create();
                 dialog.show();
+            }
+        });
+
+        Button clearButton = (Button) findViewById(R.id.clearButtonCreate);
+        clearButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                current.clearField();
+                redraw();
             }
         });
 

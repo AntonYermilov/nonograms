@@ -49,9 +49,9 @@ public class CrosswordActivity extends AppCompatActivity implements SurfaceHolde
         try {
             current = Controller.getLocalCrosswordByFilename(filename);
         } catch (IOException e) {
-            e.printStackTrace();
+            Log.d("CrosswordActivity", "problem opening file");
         } catch (ClassNotFoundException e) {
-            e.printStackTrace();
+            Log.d("CrosswordActivity", "did not found right class");
         }
 
         final SurfaceView surface = (SurfaceView) findViewById(R.id.surfaceView);
@@ -72,13 +72,22 @@ public class CrosswordActivity extends AppCompatActivity implements SurfaceHolde
                 messageResult.setGravity(Gravity.CENTER);
                 messageResult.setTextSize(20);
                 if (checkResult) {
-                    messageResult.setText("WOW! You solved it right!");
+                    messageResult.setText(R.string.WowMsg);
                 } else {
-                    messageResult.setText("There are some mistakes, try to solve it again. =(");
+                    messageResult.setText(R.string.MistakesMsg);
                 }
                 AlertDialog info = new AlertDialog.Builder(CrosswordActivity.this).create();
                 info.setView(messageResult);
                 info.show();
+            }
+        });
+
+        Button clearButton = (Button) findViewById(R.id.clearButton);
+        clearButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                current.clearField();
+                redraw();
             }
         });
 
@@ -90,7 +99,7 @@ public class CrosswordActivity extends AppCompatActivity implements SurfaceHolde
             lastColor = colors[0];
             Point size = new Point();
             getWindowManager().getDefaultDisplay().getSize(size);
-            int width = size.x / 10 * 7;
+            int width = size.x / 10 * 9;
             for (int i = 0; i < colors.length; i++) {
                 colorButtons[i] = new Button(this);
                 colorButtons[i].setBackgroundColor(colors[i]);
@@ -99,7 +108,7 @@ public class CrosswordActivity extends AppCompatActivity implements SurfaceHolde
                 colorButtons[i].setOnClickListener(new View.OnClickListener() {
                     @Override
                     public void onClick(View view) {
-                        lastColor = ((ColorDrawable)(((Button) view).getBackground())).getColor();
+                        lastColor = ((ColorDrawable)(view.getBackground())).getColor();
                     }
                 });
                 Log.i("Crossword activity: ", colorButtons[i].getWidth() + " " + width);
@@ -115,7 +124,7 @@ public class CrosswordActivity extends AppCompatActivity implements SurfaceHolde
         try {
             Controller.updateLocalyByFilename(filename, current);
         } catch (IOException e) {
-            e.printStackTrace();
+            Log.e("CrosswordActivity:", "couldn't update file.");
         }
     }
 

@@ -1,7 +1,6 @@
 package ru.spbau.nonograms.ui;
 
 import android.content.Intent;
-import android.graphics.Color;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.util.Log;
@@ -11,13 +10,11 @@ import android.widget.ArrayAdapter;
 import android.widget.ListView;
 import android.widget.Toast;
 
-import java.io.IOException;
 import java.util.ArrayList;
 
 import ru.spbau.nonograms.R;
 import ru.spbau.nonograms.controller.Controller;
 import ru.spbau.nonograms.local_database.CrosswordInfo;
-import ru.spbau.nonograms.local_database.CurrentCrosswordState;
 
 public class CrosswordListActivity extends AppCompatActivity {
 
@@ -48,7 +45,7 @@ public class CrosswordListActivity extends AppCompatActivity {
             }
             Log.d("Colors: ", "" + crosswordList.get(i).getNumberOfColors());
         }
-        ArrayAdapter<String> adapter = new ArrayAdapter<String>(
+        ArrayAdapter<String> adapter = new ArrayAdapter<>(
                 this, android.R.layout.simple_list_item_1, list);
         ListView lv = (ListView) findViewById(R.id.List);
         lv.setAdapter(adapter);

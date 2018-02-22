@@ -100,6 +100,6 @@
             android:layout_gravity="fill"
             android:layout_row="3"
             android:fontFamily="casual"
-            android:text="Save crossword" />
+            android:text="@string/save_crossword" />
     </GridLayout>
 </android.support.constraint.ConstraintLayout>

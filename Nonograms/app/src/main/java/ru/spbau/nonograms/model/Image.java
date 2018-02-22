@@ -109,7 +109,6 @@ public class Image {
             }
         }
 
-        System.err.println(width + " " + height + " " + colors + " " + backgroundColor);
         ColoredValue[][] rows = new ColoredValue[height][];
         for (int i = 0; i < height; i++) {
             ArrayList<ColoredValue> blocks = new ArrayList<>();

@@ -51,50 +51,94 @@ public class CurrentCrosswordState implements Serializable {
             }
         }
         this.colors = Arrays.copyOf(colors, colors.length);
-        for (int i = 0; i < rows.length; i++) {
-            rowsMax = Math.max(rowsMax, rows[i].length);
+        for (ColoredValue[] row : rows) {
+            rowsMax = Math.max(rowsMax, row.length);
         }
-        for (int i = 0; i < columns.length; i++) {
-            columnsMax = Math.max(columnsMax, columns[i].length);
+        for (ColoredValue[] column : columns) {
+            columnsMax = Math.max(columnsMax, column.length);
         }
     }
 
+    /**
+     * Returns background color of a crossword.
+     * @return background color of a crossword.
+     */
     public int getBackgroundColor() {
         return backgroundColor;
     }
 
+    /**
+     * Returns array of colors used in the crossword.
+     * @return array of colors used in the crossword.
+     */
     public int[] getColors() {
         return colors;
     }
 
+    /**
+     * Returns height of the crossword.
+     * @return height of the crossword.
+     */
     public int getHeight() {
         return height;
     }
 
+    /**
+     * Returns width of the crossword.
+     * @return width of the crossword.
+     */
     public int getWidth() {
         return width;
     }
 
+    /**
+     * Returns value in the field -- color and number. (ColoredValue)
+     * @param i a row to look at
+     * @param j a column to look at
+     * @return value in the field -- color and number. (ColoredValue)
+     */
     public ColoredValue getField(int i, int j) {
         return field[i][j];
     }
 
+    /**
+     * Sets a colored value in the field.
+     * @param i a row to look at
+     * @param j a column to look at
+     * @param value to store into the postion
+     */
     public void setField(int i, int j, ColoredValue value) {
         field[i][j] = value;
     }
 
+    /**
+     * Returns information about rows.
+     * @return information about rows.
+     */
     public ColoredValue[][] getRows() {
         return rows;
     }
 
+    /**
+     * Returns information about columns.
+     * @return information about columns.
+     */
     public ColoredValue[][] getColumns() {
         return columns;
     }
 
+    /**
+     * Returns maximum length of information array about the rows.
+     * @return maximum length of information array about the rows.
+     */
     public int getRowsMax() {
         return rowsMax;
     }
 
+    /**
+     * Returns maximum length of information array about the columns.
+     * @return maximum length of information array about the columns.
+     */
     public int getColumnsMax() {
         return columnsMax;
     }
@@ -110,6 +154,16 @@ public class CurrentCrosswordState implements Serializable {
         return res;
     }
 
+    /** Clears all the field of a crossword */
+    public void clearField() {
+        for (int i = 0; i < width; i++) {
+            for (int j = 0; j < height; j++) {
+                field[i][j] = new ColoredValue(0, Color.WHITE);
+            }
+        }
+    }
+
+    /** A class to store color and value */
     public static class ColoredValue implements Serializable {
         private int value;
         private int color;

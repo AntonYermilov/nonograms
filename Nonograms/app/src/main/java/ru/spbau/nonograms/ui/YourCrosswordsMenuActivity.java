@@ -2,7 +2,6 @@ package ru.spbau.nonograms.ui;
 
 import android.content.DialogInterface;
 import android.content.Intent;
-import android.support.constraint.ConstraintLayout;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
@@ -81,6 +80,14 @@ public class YourCrosswordsMenuActivity extends AppCompatActivity {
                         startActivity(intent);
                     }
                 });
+            }
+        });
+        Button loadNew = (Button) findViewById(R.id.loadNewButton);
+        loadNew.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                Intent intent = new Intent(YourCrosswordsMenuActivity.this, LoadCrosswordsActivity.class);
+                startActivity(intent);
             }
         });
     }

@@ -12,6 +12,7 @@ import android.text.InputType;
 import android.util.Log;
 import android.view.View;
 import android.widget.Button;
+import android.widget.CheckBox;
 import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
@@ -60,7 +61,7 @@ public class CreateByPictureCrosswordActivity extends AppCompatActivity {
                 TextView multiplySign = new TextView(CreateByPictureCrosswordActivity.this);
                 multiplySign.setText("x");
                 TextView colorText = new TextView(CreateByPictureCrosswordActivity.this);
-                colorText.setText(", number of colors: ");
+                colorText.setText(R.string.NumberOfColorsStr);
                 final EditText inputColors = new EditText(CreateByPictureCrosswordActivity.this);
                 inputColors.setInputType(InputType.TYPE_CLASS_NUMBER);
                 LinearLayout dataView = new LinearLayout(CreateByPictureCrosswordActivity.this);
@@ -126,11 +127,20 @@ public class CreateByPictureCrosswordActivity extends AppCompatActivity {
         saveCrosswordButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
+
                 final EditText inputName = new EditText(CreateByPictureCrosswordActivity.this);
+                final TextView typeInText = new TextView(CreateByPictureCrosswordActivity.this);
+                typeInText.setText(R.string.type_in_name);
+                final CheckBox saveOnServer = new CheckBox(CreateByPictureCrosswordActivity.this);
+                saveOnServer.setText(R.string.save_on_server);
+                LinearLayout dataView = new LinearLayout(CreateByPictureCrosswordActivity.this);
+                dataView.setOrientation(LinearLayout.VERTICAL);
+                dataView.addView(typeInText);
+                dataView.addView(inputName);
+                dataView.addView(saveOnServer);
                 final AlertDialog dialog = new AlertDialog.Builder(CreateByPictureCrosswordActivity.this)
                         .setTitle("Save your crossword")
-                        .setMessage("Type in your crosswords' name:")
-                        .setView(inputName)
+                        .setView(dataView)
                         .setPositiveButton("Save", new DialogInterface.OnClickListener() {
                             @Override
                             public void onClick(DialogInterface dialogInterface, int i) {
@@ -138,8 +148,11 @@ public class CreateByPictureCrosswordActivity extends AppCompatActivity {
                                     CurrentCrosswordState state = Controller.getMadeCrosswordFromLastImage();
                                     Log.d("Colors: ", Arrays.toString(state.getColors()));
                                     Controller.addCrosswordLocallyByParametres(state, inputName.getText().toString());
+                                    if (saveOnServer.isChecked()) {
+                                        Controller.addCrosswordOnServerByParametres(state, inputName.getText().toString());
+                                    }
                                 } catch (IOException e) {
-                                    e.printStackTrace();
+                                    Log.e("CreateByPicture", "couldn't save " + e.getMessage());
                                 }
                             }
                         })

@@ -1,15 +1,11 @@
 package ru.spbau.nonograms.client;
 
-import android.support.test.runner.AndroidJUnit4;
-
 import org.junit.Test;
-import org.junit.runner.RunWith;
 
 import ru.spbau.nonograms.model.Image;
 
-import static org.junit.Assert.*;
+import static org.junit.Assert.assertEquals;
 
-@RunWith(AndroidJUnit4.class)
 public class ClientManagerTest {
     private static Image heart = new Image(new int[][]{
             {48, 49, 48, 49, 48},
@@ -47,10 +43,9 @@ public class ClientManagerTest {
             {0, 1, 1, 1, 1, 1, 1, 1, 1, 0}
     }, 1, 0);
 
-
     @Test
     public void testSolveNonogramHeart() {
-        assertEquals(true, ClientManager.solveNonogram(heart));
+         assertEquals(true, ClientManager.solveNonogram(heart));
     }
 
     @Test

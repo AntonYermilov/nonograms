@@ -26,6 +26,7 @@ if [ $# = 1 ]; then
 
         echo "Starting server..."
         mkdir -p log
+        mkdir -p db_storage
         ./server/server.py 2> log/server.err &
     fi
 

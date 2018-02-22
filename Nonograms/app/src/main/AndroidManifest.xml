@@ -24,7 +24,8 @@
         <activity android:name=".ui.CrosswordActivity" />
         <activity android:name=".ui.CreateByPictureCrosswordActivity" />
         <activity android:name=".ui.YourCrosswordsMenuActivity" />
-        <activity android:name=".ui.CreateManuallyCrosswordActivity"></activity>
+        <activity android:name=".ui.CreateManuallyCrosswordActivity" />
+        <activity android:name=".ui.LoadCrosswordsActivity"></activity>
     </application>
 
 </manifest>

@@ -7,4 +7,26 @@
     <string name="your_image_text">Your image:</string>
     <string name="make_puzzle_text">Make puzzle</string>
     <string name="upload_picture_text">upload picture</string>
+    <string name="NumberOfColorsStr">, number of colors:</string>
+    <string name="WowMsg">WOW! You solved it right!</string>
+    <string name="MistakesMsg">There are some mistakes, try to solve it again. =(</string>
+    <string name="save_crossword">Save crossword</string>
+    <string name="save_text">Save</string>
+    <string name="check_text">Check</string>
+    <string name="black_n_white">Black\'n\'White</string>
+    <string name="coloured">Coloured</string>
+    <string name="your_crosswords">Your crosswords</string>
+    <string name="choose_crossword_text">Choose crossword type you want to solve:</string>
+    <string name="create_by_picture">create by picture</string>
+    <string name="create_manually">Create manually</string>
+    <string name="you_can_do_text">You can do with your crosswords the following:</string>
+    <string name="clear_text">clear</string>
+    <string name="type_in_name">Type in your crosswords\' name:</string>
+    <string name="save_on_server">save on server</string>
+    <string name="choose_to_solve">Choose crossword you want to solve:</string>
+    <string name="load_new">load new crosswords</string>
+    <string name="choose_to_download">Choose crossword to download:</string>
+    <string name="crossword_name">Crossword name:&#160;</string>
+    <string name="author_name">Author name:&#160;</string>
+    <string name="crossword_size">Crossword size:&#160;</string>
 </resources>
